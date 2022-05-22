@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="container flex-shrink-0" th:fragment="navbar">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none"
+           href="../index.html" th:href="@{/}">
+            <i class="bi bi-kanban fs-3 me-2"></i>
+            <span class="fs-4">Project Manager</span>
+        </a>
+
+        <div class="col-md-3 text-end">
+            <a class="btn btn-outline-primary me-2" href="#">Войти</a>
+            <a class="btn btn-primary" href="#">Зарегистрироваться</a>
+        </div>
+    </header>
+</div>
+</body>
+</html>

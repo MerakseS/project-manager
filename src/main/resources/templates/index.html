@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Greetings</title>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Project manager')">
+    <title>Project manager</title>
 </head>
-<body>
-    <h1 th:text="'Hello world!'">Hello world!</h1>
+
+<body class="d-flex flex-column h-100">
+
+<div class="mb-auto">
+    <div th:replace="fragment/navbar::navbar"></div>
+</div>
+
+<main class="flex-shrink-0">
+    <div class="container d-flex w-50 p-3 mx-auto flex-column text-center">
+        <main class="px-3">
+            <h1>Project Manager</h1>
+            <p class="lead">
+                Веб-сервис для организации и управления проектами и задачами для IT компании.
+            </p>
+            <p class="lead">
+                <a href="#" th:href="@{/login}" class="btn btn-primary btn-lg fw-bold">
+                    Войти
+                </a>
+            </p>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
 </body>
 </html>

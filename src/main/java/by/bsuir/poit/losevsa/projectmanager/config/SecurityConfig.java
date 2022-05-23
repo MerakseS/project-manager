@@ -30,12 +30,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
             .antMatchers("/*").permitAll()
+
             .and().formLogin().permitAll()
             .loginPage("/login")
             .loginProcessingUrl("/perform-login")
             .usernameParameter("username")
             .passwordParameter("password")
-            .defaultSuccessUrl("/");
+            .defaultSuccessUrl("/")
+
+            .and().rememberMe().
+            rememberMeParameter("remember-me");
     }
 
     @Override

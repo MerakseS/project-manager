@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Вход')">
+    <title>Вход</title>
+</head>
+
+<style>
+    .form-signin input[type="text"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+</style>
+
+<body class="bg-light d-flex flex-column h-100">
+
+<div class="mb-auto"></div>
+
+<main class="flex-shrink-0">
+    <div class="container d-flex w-25 p-3 mx-auto flex-column text-center">
+        <div class="px-3">
+            <form class="form-signin" th:action="@{/perform-login}" method="POST">
+                <i class="bi bi-kanban fs-1 mb-4"></i>
+                <h1 class="h3 mb-3 fw-normal">Вход в аккаунт</h1>
+
+                <div th:if="${param.error}" class="alert alert-danger">
+                    Неправильные имя и пароль.
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-success">
+                    Вы вышли из аккаунта.
+                </div>
+
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    <label for="username">Логин</label>
+                </div>
+                <div class="form-floating" style="position: relative">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    <label for="password">Пароль</label>
+                </div>
+
+                <div class="checkbox my-3">
+                    <label>
+                        <input type="checkbox" value="remember-me">Запомнить меня
+                    </label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+                <p class="mt-5 mb-3 text-muted">LosevSA &mdash; Copyright &copy; 2022</p>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div class="mt-auto"></div>
+
+</body>
+</html>

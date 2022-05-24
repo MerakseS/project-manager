@@ -1,35 +1,29 @@
 package by.bsuir.poit.losevsa.projectmanager.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import by.bsuir.poit.losevsa.projectmanager.service.EmployeeDetailsService;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final EmployeeDetailsService employeeDetailsService;
+    private final UserDetailsService employeeService;
 
-    public SecurityConfig(EmployeeDetailsService employeeDetailsService) {
-        this.employeeDetailsService = employeeDetailsService;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    public SecurityConfig(UserDetailsService employeeDetailsService) {
+        this.employeeService = employeeDetailsService;
     }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-            .antMatchers("/*").permitAll()
+            .antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+            .antMatchers("/**").permitAll()
 
             .and().formLogin().permitAll()
             .loginPage("/login")
@@ -39,11 +33,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .defaultSuccessUrl("/")
 
             .and().rememberMe().
-            rememberMeParameter("remember-me");
+            rememberMeParameter("remember-me")
+
+            .and().logout()
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .logoutSuccessUrl("/");
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(employeeDetailsService);
+        authenticationManagerBuilder.userDetailsService(employeeService);
     }
 }

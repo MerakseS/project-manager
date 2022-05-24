@@ -1,16 +1,21 @@
 package by.bsuir.poit.losevsa.projectmanager.entity;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 @Table(name = "employee")
@@ -23,41 +28,42 @@ public class Employee {
 
     @NotBlank(message = "Логин должен быть заполнен.")
     @NotNull(message = "Логин должен быть заполнен.")
-    @UniqueElements(message = "Данный логин уже занят.")
-    @Length(message = "Длина логина должна быть от 4 до 30 символов.", min = 4, max = 30)
+    @Length(message = "Длина логина от 4 до 30 символов.", min = 4, max = 30)
     @Column(name = "login", nullable = false, unique = true, length = 30)
     private String login;
 
     @NotBlank(message = "Пароль должен быть заполнен.")
     @NotNull(message = "Пароль должен быть заполнен.")
-    @Length(message = "Длина пароля должна быть больше 4 символов.", min = 4, max = 255)
+    @Length(message = "Длина пароля меньше 4 символов.", min = 4, max = 255)
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Transient
+    private String passwordConfirm;
+
     @NotBlank(message = "Имя должно быть заполнено.")
     @NotNull(message = "Имя должно быть заполнено.")
-    @Length(message = "Длина имени должна быть от 2 до 30 символов.", min = 2, max = 30)
+    @Length(message = "Длина имени от 2 до 30 символов.", min = 2, max = 30)
     @Column(name = "first_name", nullable = false, length = 30)
     private String firstName;
 
     @NotBlank(message = "Фамилия должна быть заполнена.")
     @NotNull(message = "Фамилия должна быть заполнена.")
-    @Length(message = "Длина фамилии должна быть от 2 до 30 символов.", min = 2, max = 30)
+    @Length(message = "Длина фамилии от 2 до 30 символов.", min = 2, max = 30)
     @Column(name = "surname", nullable = false, length = 30)
     private String surname;
 
-    @Length(message = "Длина отчества должна быть от 2 до 30 символов.", min = 2, max = 30)
     @Column(name = "patronymic", length = 30)
     private String patronymic;
 
     @NotBlank(message = "Должность должна быть заполнена.")
     @NotNull(message = "Должность должна быть заполнена.")
-    @Length(message = "Длина должности должна быть от 2 до 30 символов.", min = 2, max = 30)
+    @Length(message = "Длина должности от 2 до 30 символов.", min = 2, max = 30)
     @Column(name = "position", nullable = false, length = 30)
     private String position;
 
-    @Column(name = "role", length = 30)
-    private String role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private Set<Role> roles;
 
     public Long getId() {
         return id;
@@ -81,6 +87,14 @@ public class Employee {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
     public String getFirstName() {
@@ -115,11 +129,11 @@ public class Employee {
         this.position = position;
     }
 
-    public String getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

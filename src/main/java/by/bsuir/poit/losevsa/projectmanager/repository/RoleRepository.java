@@ -3,10 +3,10 @@ package by.bsuir.poit.losevsa.projectmanager.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
+import by.bsuir.poit.losevsa.projectmanager.entity.Role;
 
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Employee findByLogin(String login);
+    Role findByName(String name);
 }

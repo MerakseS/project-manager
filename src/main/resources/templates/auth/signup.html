@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Регистрация')">
+    <title>Регистрация</title>
+</head>
+
+<body class="signin-body bg-light text-center">
+<main class="form-signin">
+    <div class="px-3">
+        <form th:action="@{/signup}" th:method="POST" th:object="${employee}">
+            <i class="bi bi-kanban fs-1 mb-4"></i>
+            <h1 class="h3 mb-3 fw-normal">Регистрация аккаунта</h1>
+
+            <div class="form-floating mb-3">
+                <input type="text" id="login" placeholder="Login" th:field="*{login}" class="form-control"
+                       th:classappend="${#fields.hasErrors('login')} ? 'is-invalid'">
+                <label for="login">Логин</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('login')}" th:errors="*{login}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control input-top" id="password" placeholder="Password" th:field="*{password}"
+                       th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'">
+                <label for="password">Пароль</label>
+                <div class="invalid-feedback mb-3" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    Valid is required.
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control input-bottom" id="passwordConfirm" placeholder="Password"
+                       th:field="*{passwordConfirm}" th:classappend="${#fields.hasErrors('passwordConfirm')} ? 'is-invalid'">
+                <label for="passwordConfirm">Подтверждение пароля</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <div class="form-floating">
+                <input type="text" class="form-control input-top" id="firstName" placeholder="Name" th:field="*{firstName}"
+                       th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'">
+                <label for="firstName">Имя</label>
+                <div class="invalid-feedback mb-3" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+                    Valid is required.
+                </div>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control input-center" id="surname" placeholder="Surname" th:field="*{surname}"
+                       th:classappend="${#fields.hasErrors('surname')} ? 'is-invalid'">
+                <label for="surname">Фамилия</label>
+                <div class="invalid-feedback mb-3" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">
+                    Valid is required.
+                </div>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control input-bottom" id="patronymic" placeholder="Patronymic"
+                       th:field="*{patronymic}" th:classappend="${#fields.hasErrors('patronymic')} ? 'is-invalid'">
+                <label for="patronymic">Отчество</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('patronymic')}" th:errors="*{patronymic}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <div class="form-floating my-3">
+                <input type="text" class="form-control" id="position" placeholder="Position" th:field="*{position}"
+                       th:classappend="${#fields.hasErrors('position')} ? 'is-invalid'">
+                <label for="position">Должность</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('position')}" th:errors="*{position}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <button class="w-100 mb-3 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
+            <p class="text-muted">Уже есть аккаунт?
+                <a class="text-decoration-none" href="signup.html" th:href="@{/signup}">Войти</a>
+            </p>
+
+            <p class="mt-5 mb-3 text-muted">LosevSA &mdash; Copyright &copy; 2022</p>
+        </form>
+    </div>
+</main>
+</body>
+</html>

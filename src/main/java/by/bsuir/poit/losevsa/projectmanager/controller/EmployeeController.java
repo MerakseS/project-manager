@@ -1,6 +1,9 @@
 package by.bsuir.poit.losevsa.projectmanager.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import static java.lang.String.format;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -8,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
@@ -21,15 +26,19 @@ public class EmployeeController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeController.class);
 
+    private static final String ID_PATH_VARIABLE_NAME = "id";
+    private static final String ERROR_ATTRIBUTE_NAME = "errorMessage";
+    private static final String EMPLOYEE_ATTRIBUTE_NAME = "employee";
+    private static final String EMPLOYEE_LIST_ATTRIBUTE_NAME = "employeeList";
+
     private static final String EMPLOYEE_LIST_PAGE_PATH = "employee/employeeList";
     private static final String EMPLOYEE_PAGE_PATH = "employee/employee";
     private static final String EMPLOYEE_EDIT_PAGE_PATH = "employee/editEmployee";
+    private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
 
     private static final String LOGIN_REDIRECT = "redirect:/login";
     private static final String PROFILE_REDIRECT = "redirect:/profile";
-
-    private static final String EMPLOYEE_ATTRIBUTE_NAME = "employee";
-    private static final String EMPLOYEE_LIST_ATTRIBUTE_NAME = "employeeList";
+    private static final String EMPLOYEE_LIST_REDIRECT = "redirect:/employee";
 
     private final EmployeeService employeeService;
 
@@ -45,5 +54,34 @@ public class EmployeeController {
         List<Employee> employeeList = employeeService.getAll();
         model.addAttribute(EMPLOYEE_LIST_ATTRIBUTE_NAME, employeeList);
         return EMPLOYEE_LIST_PAGE_PATH;
+    }
+
+    @GetMapping("/{id}")
+    public String showEmployee(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Model model) {
+        try {
+            Employee employee = employeeService.get(id);
+            model.addAttribute(EMPLOYEE_ATTRIBUTE_NAME, employee);
+            return EMPLOYEE_PAGE_PATH;
+        }
+        catch (NoSuchElementException e) {
+            return handleNoSuchElementException("Can't show employee with id %d", id, e, model);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteEmployee(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Model model) {
+        try {
+            employeeService.delete(id);
+            return EMPLOYEE_LIST_REDIRECT;
+        }
+        catch (NoSuchElementException e) {
+            return handleNoSuchElementException("Can't delete customer with id %d", id, e, model);
+        }
+    }
+
+    private String handleNoSuchElementException(String logMessage, long id, NoSuchElementException exception, Model model) {
+        LOG.warn(format(logMessage, id), exception);
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Клиента с id %d не существует :(", id));
+        return NOT_FOUND_PAGE_PATH;
     }
 }

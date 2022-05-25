@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Project manager')">
+    <title>Project manager</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="mb-auto">
+    <div th:replace="fragment/navbar::navbar"></div>
+</div>
+
+<main class="flex-shrink-0">
+    <div class="container d-flex w-50 p-3 mx-auto flex-column text-center">
+        <main class="px-3">
+            <h1>404</h1>
+            <p class="lead" th:text="${errorMessage}">Error message</p>
+            <p class="lead">
+                <a href="index.html" th:href="@{/}" class="btn btn-primary btn-lg fw-bold">
+                    На главную
+                </a>
+            </p>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

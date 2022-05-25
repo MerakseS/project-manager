@@ -37,12 +37,12 @@
                     <td class="text-end">
                         <form th:action="@{/employee/{id}(id=*{id})}" th:method="DELETE">
                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                <button type="button" class="btn btn-outline-secondary" th:href="@{/employee/{id}(id=*{id})}">
+                                <a class="btn btn-outline-secondary" th:href="@{/employee/{id}(id=*{id})}">
                                     <i class="bi bi-eye-fill"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" th:href="@{/employee/{id}/edit(id=*{id})}">
+                                </a>
+                                <a class="btn btn-outline-secondary" th:href="@{/employee/{id}/edit(id=*{id})}">
                                     <i class="bi bi-pencil-fill"></i>
-                                </button>
+                                </a>
                                 <button type="submit" class="btn btn-outline-secondary">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
@@ -52,6 +52,7 @@
                 </tr>
                 </tbody>
             </table>
+            <a class="btn btn-primary" href="../auth/signup.html" th:href="@{/signup}">Добавить пользователя</a>
         </main>
     </div>
 </main>

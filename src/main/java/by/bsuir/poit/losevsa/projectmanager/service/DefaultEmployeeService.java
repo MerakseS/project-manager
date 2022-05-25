@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Role;
@@ -53,6 +54,7 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     }
 
     @Override
+    @Transactional
     public void create(Employee employee) {
         Employee oldEmployee = employeeRepository.findByLogin(employee.getLogin());
         if (oldEmployee != null) {
@@ -73,7 +75,9 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
 
     @Override
     public Employee get(long id) {
-        return null;
+        Employee employee = employeeRepository.findById(id).orElseThrow();
+        LOG.info(format("Successfully got employee with id %d", id));
+        return employee;
     }
 
     @Override
@@ -94,11 +98,13 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     }
 
     @Override
+    @Transactional
     public void update(long id, Employee employee) {
 
     }
 
     @Override
+    @Transactional
     public void update(String login, Employee newEmployee) {
         Employee oldEmployee = employeeRepository.findByLogin(login);
         if (newEmployee == null) {
@@ -116,7 +122,15 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow();
 
+        for (Role role : employee.getRoles()) {
+            employee.getRoles().remove(role);
+        }
+
+        employeeRepository.delete(employee);
+        LOG.info(format("Successfully deleted employee with id %d", id));
     }
 }

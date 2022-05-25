@@ -13,15 +13,17 @@ public class MainController {
 
     @GetMapping
     public String showHomePage(Authentication authentication) {
-        if (authentication != null) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            for (GrantedAuthority authority : userDetails.getAuthorities()) {
-                if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                    return "auth/admin";
-                }
-                if (authority.getAuthority().equals("ROLE_USER")) {
-                    return "auth/user";
-                }
+        if (authentication == null) {
+            return HOME_PAGE_NAME;
+        }
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        for (GrantedAuthority authority : userDetails.getAuthorities()) {
+            if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                return "auth/admin";
+            }
+            if (authority.getAuthority().equals("ROLE_USER")) {
+                return "redirect:/profile";
             }
         }
 

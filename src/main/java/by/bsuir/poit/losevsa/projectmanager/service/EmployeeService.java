@@ -10,6 +10,8 @@ public interface EmployeeService {
 
     Employee get(long id);
 
+    Employee getByLogin(String login);
+
     List<Employee> getAll();
 
     void update(long id, Employee employee);

@@ -1,21 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<div class="container flex-shrink-0" th:fragment="navbar">
-    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+<div class="flex-shrink-0" th:fragment="navbar">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between p-2 mb-4 border-bottom">
         <a class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none"
            href="../index.html" th:href="@{/}">
             <i class="bi bi-kanban fs-3 me-2"></i>
             <span class="fs-4">Project Manager</span>
         </a>
 
-        <div class="col-md-3 text-end">
+        <div class="col-md-3 text-end" sec:authorize="isAnonymous()">
             <a class="btn btn-outline-primary me-2" href="../auth/login.html" th:href="@{/login}">Войти</a>
             <a class="btn btn-primary" href="../auth/signup.html" th:href="@{/signup}">Зарегистрироваться</a>
+        </div>
+
+        <div class="col-md-3 text-end" sec:authorize="isAuthenticated()">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false" th:text="|@${#authentication.name}|"></button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="../employee/employee.html" th:href="@{/profile}">Профиль</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#" th:href="@{#}">Проекты</a>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="POST">
+                            <input class="dropdown-item" type="submit" value="Выход"/>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
 </div>

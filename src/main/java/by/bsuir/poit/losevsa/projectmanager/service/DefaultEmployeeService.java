@@ -2,6 +2,7 @@ package by.bsuir.poit.losevsa.projectmanager.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import static java.lang.String.format;
 
 import org.slf4j.Logger;
@@ -59,15 +60,15 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
             throw new EmployeeAlreadyExistsException(format("Employee with login %s already exists.", employee.getLogin()));
         }
 
-        if (!employee.getPassword().equals(employee.getPasswordConfirm())) {
-            throw new PasswordsEqualException(format("Passwords are equal. Password: %s, confirm password: %s",
-                employee.getPassword(), employee.getPasswordConfirm()));
-        }
+        confirmPassword(employee.getPassword(), employee.getPasswordConfirm());
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
 
         Role userRole = roleRepository.findByName("USER");
         employee.setRoles(Collections.singleton(userRole));
 
-        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+        if (employee.getPatronymic() != null && employee.getPatronymic().isBlank()) {
+            employee.setPatronymic(null);
+        }
 
         employee = employeeRepository.save(employee);
         LOG.info(format("Successfully registered user %s with id %d", employee.getLogin(), employee.getId()));
@@ -76,6 +77,17 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     @Override
     public Employee get(long id) {
         return null;
+    }
+
+    @Override
+    public Employee getByLogin(String login) {
+        Employee employee = employeeRepository.findByLogin(login);
+        if (employee == null) {
+            throw new NoSuchElementException(format("Employee with login %s doesn't exist.", login));
+        }
+
+        LOG.info(format("Successfully got employee with id %d", employee.getId()));
+        return employee;
     }
 
     @Override
@@ -91,5 +103,12 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     @Override
     public void delete(long id) {
 
+    }
+
+    private void confirmPassword(String password, String passwordConfirm) {
+        if (!password.equals(passwordConfirm)) {
+            throw new PasswordsEqualException(
+                format("Passwords are equal. Password: %s, confirm password: %s", password, passwordConfirm));
+        }
     }
 }

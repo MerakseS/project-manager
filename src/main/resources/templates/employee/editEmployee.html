@@ -7,7 +7,8 @@
 <body class="signin-body bg-light text-center">
 <main class="form-signin">
     <div class="px-3">
-        <form th:action="@{/profile}" th:method="PUT" th:object="${employee}">
+        <form th:method="PUT" th:object="${employee}"
+              th:action="${#authorization.expression('hasRole(''ROLE_ADMIN'')')} ? @{/employee/{id}(id=*{id})} : @{/profile}">
             <i class="bi bi-kanban fs-1 mb-4"></i>
             <h1 class="h3 mb-3 fw-normal" th:text="|Изменение аккаунта @*{login}|"></h1>
 

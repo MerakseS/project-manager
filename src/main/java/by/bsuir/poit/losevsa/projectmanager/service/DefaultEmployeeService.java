@@ -3,6 +3,7 @@ package by.bsuir.poit.losevsa.projectmanager.service;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import static java.lang.String.format;
 
 import org.slf4j.Logger;
@@ -99,8 +100,13 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
 
     @Override
     @Transactional
-    public void update(long id, Employee employee) {
+    public void update(long id, Employee newEmployee) {
+        Optional<Employee> oldEmployee = employeeRepository.findById(id);
+        if (oldEmployee.isEmpty()) {
+            throw new NoSuchElementException(format("Employee with id %d doesn't exist.", id));
+        }
 
+        update(oldEmployee.get(), newEmployee);
     }
 
     @Override
@@ -111,6 +117,10 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
             throw new NoSuchElementException(format("Employee with login %s doesn't exist.", login));
         }
 
+        update(oldEmployee, newEmployee);
+    }
+
+    private void update(Employee oldEmployee, Employee newEmployee) {
         oldEmployee.setFirstName(newEmployee.getFirstName());
         oldEmployee.setSurname(newEmployee.getSurname());
         oldEmployee.setPosition(newEmployee.getPosition());

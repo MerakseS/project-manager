@@ -13,17 +13,32 @@
     <div class="container">
         <main class="px-3">
             <div th:object="${employee}">
-                <!--                <a class="text-black" href="customerList.html" th:href="@{/customer}"><i class="bi bi-chevron-left"></i></a>-->
                 <h2 th:text="|*{surname} *{firstName} *{patronymic ?: ''}|">Имя Фамилия Отчество</h2>
                 <h6 class="text-muted" th:text="|@*{login}|"></h6>
                 <p th:text="|Должность: *{position}|"></p>
+                <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <p>
+                        <th:block th:each="role : *{roles}" th:text="|${role.name} |">role</th:block>
+                    </p>
+                </div>
 
-                <form class="form" th:method="POST" th:action="@{/logout}">
-                    <a class="btn btn-primary" href="editEmployee.html" th:href="@{/profile/edit}">
-                        Изменить
-                    </a>
-                    <input type="submit" class="btn btn-secondary" value="Выйти из аккаунта"/>
-                </form>
+                <div th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <form class="form" th:method="POST" th:action="@{/logout}">
+                        <a class="btn btn-primary" href="editEmployee.html" th:href="@{/profile/edit}">
+                            Изменить
+                        </a>
+                        <input type="submit" class="btn btn-secondary" value="Выйти из аккаунта"/>
+                    </form>
+                </div>
+
+                <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <form class="form" th:action="@{/employee/{id}(id=*{id})}" th:method="DELETE">
+                        <a class="btn btn-primary" href="editEmployee.html" th:href="@{/employee/{id}/edit(id=*{id})}">
+                            Изменить
+                        </a>
+                        <input type="submit" class="btn btn-danger" value="Удалить аккаунт"/>
+                    </form>
+                </div>
             </div>
         </main>
     </div>

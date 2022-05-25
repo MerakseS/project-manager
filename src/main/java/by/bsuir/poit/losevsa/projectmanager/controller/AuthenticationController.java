@@ -37,7 +37,7 @@ public class AuthenticationController {
     private static final String LOGIN_PAGE_PATH = "auth/login";
     private static final String SIGN_UP_PAGE_PATH = "auth/signup";
     private static final String EMPLOYEE_PAGE_PATH = "employee/employee";
-    private static final String EMPLOYEE_EDIT_PAGE_PATH = "employee/editEmployee";
+    private static final String EDIT_EMPLOYEE_PAGE_PATH = "employee/editEmployee";
 
     private static final String LOGIN_REDIRECT = "redirect:/login";
     private static final String PROFILE_REDIRECT = "redirect:/profile";
@@ -110,7 +110,7 @@ public class AuthenticationController {
         Employee employee = employeeService.getByLogin(userDetails.getUsername());
         model.addAttribute(EMPLOYEE_ATTRIBUTE_NAME, employee);
 
-        return EMPLOYEE_EDIT_PAGE_PATH;
+        return EDIT_EMPLOYEE_PAGE_PATH;
     }
 
     @PutMapping("/profile")
@@ -123,7 +123,7 @@ public class AuthenticationController {
 
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't update employee cause: %s", bindingResult));
-                return EMPLOYEE_EDIT_PAGE_PATH;
+                return EDIT_EMPLOYEE_PAGE_PATH;
             }
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -136,7 +136,7 @@ public class AuthenticationController {
             LOG.warn("Can't update user cause", e);
             ObjectError error = new FieldError(EMPLOYEE_ATTRIBUTE_NAME, "oldPassword", "Неправильный пароль");
             bindingResult.addError(error);
-            return EMPLOYEE_EDIT_PAGE_PATH;
+            return EDIT_EMPLOYEE_PAGE_PATH;
         }
         catch (PasswordsEqualException e) {
             LOG.warn("Can't update user cause", e);

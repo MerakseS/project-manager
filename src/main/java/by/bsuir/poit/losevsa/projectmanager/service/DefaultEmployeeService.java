@@ -89,7 +89,8 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
 
     @Override
     public List<Employee> getAll() {
-        return null;
+        LOG.info("Getting all employees");
+        return employeeRepository.findAll();
     }
 
     @Override

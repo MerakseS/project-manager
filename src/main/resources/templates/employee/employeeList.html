@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Список пользователей')">
+    <title>Список пользователей</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div th:replace="fragment/navbar::navbar"></div>
+
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <main class="px-3">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Логин</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Фамилия</th>
+                    <th scope="col">Отчество</th>
+                    <th scope="col">Должность</th>
+                    <th scope="col">Роль</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="employee : ${employeeList}" th:object="${employee}">
+                    <th scope="row" th:text="*{login}"></th>
+                    <td th:text="*{firstName}"></td>
+                    <td th:text="*{surname}"></td>
+                    <td th:text="*{patronymic}"></td>
+                    <td th:text="*{position}"></td>
+                    <td>
+                        <th:block th:each="role : *{roles}" th:text="|${role.name} |">role</th:block>
+                    </td>
+                    <td class="text-end">
+                        <form th:action="@{/employee/{id}(id=*{id})}" th:method="DELETE">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
+                                <button type="button" class="btn btn-outline-secondary" th:href="@{/employee/{id}(id=*{id})}">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" th:href="@{/employee/{id}/edit(id=*{id})}">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

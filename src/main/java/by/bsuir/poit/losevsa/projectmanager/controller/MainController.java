@@ -20,7 +20,7 @@ public class MainController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         for (GrantedAuthority authority : userDetails.getAuthorities()) {
             if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                return "auth/admin";
+                return "redirect:/employee";
             }
             if (authority.getAuthority().equals("ROLE_USER")) {
                 return "redirect:/profile";

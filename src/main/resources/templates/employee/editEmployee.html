@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Изменение аккаунта')">
+    <title>Изменение аккаунта</title>
+</head>
+
+<body class="signin-body bg-light text-center">
+<main class="form-signin">
+    <div class="px-3">
+        <form th:action="@{/profile}" th:method="PUT" th:object="${employee}">
+            <i class="bi bi-kanban fs-1 mb-4"></i>
+            <h1 class="h3 mb-3 fw-normal" th:text="|Изменение аккаунта @*{login}|"></h1>
+
+            <input type="hidden" name="login" th:value="*{login}">
+
+            <div class="form-floating">
+                <input type="text" class="form-control input-top" id="firstName" placeholder="Name" th:field="*{firstName}"
+                       th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'">
+                <label for="firstName">Имя</label>
+                <div class="invalid-feedback mb-3" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">
+                    Valid is required.
+                </div>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control input-center" id="surname" placeholder="Surname" th:field="*{surname}"
+                       th:classappend="${#fields.hasErrors('surname')} ? 'is-invalid'">
+                <label for="surname">Фамилия</label>
+                <div class="invalid-feedback mb-3" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">
+                    Valid is required.
+                </div>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control input-bottom" id="patronymic" placeholder="Patronymic"
+                       th:field="*{patronymic}" th:classappend="${#fields.hasErrors('patronymic')} ? 'is-invalid'">
+                <label for="patronymic">Отчество</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('patronymic')}" th:errors="*{patronymic}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <div class="form-floating my-3">
+                <input type="text" class="form-control" id="position" placeholder="Position" th:field="*{position}"
+                       th:classappend="${#fields.hasErrors('position')} ? 'is-invalid'">
+                <label for="position">Должность</label>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('position')}" th:errors="*{position}">
+                    Valid is required.
+                </div>
+            </div>
+
+            <button class="w-100 mb-3 btn btn-lg btn-primary" type="submit">Изменить аккаунт</button>
+            <p class="mt-5 mb-3 text-muted">LosevSA &mdash; Copyright &copy; 2022</p>
+        </form>
+    </div>
+</main>
+</body>
+</html>

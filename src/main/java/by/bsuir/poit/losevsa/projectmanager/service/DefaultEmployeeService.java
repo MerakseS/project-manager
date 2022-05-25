@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Role;
 import by.bsuir.poit.losevsa.projectmanager.exception.EmployeeAlreadyExistsException;
-import by.bsuir.poit.losevsa.projectmanager.exception.PasswordsEqualException;
 import by.bsuir.poit.losevsa.projectmanager.repository.EmployeeRepository;
 import by.bsuir.poit.losevsa.projectmanager.repository.RoleRepository;
 
@@ -60,15 +59,13 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
             throw new EmployeeAlreadyExistsException(format("Employee with login %s already exists.", employee.getLogin()));
         }
 
-        confirmPassword(employee.getPassword(), employee.getPasswordConfirm());
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-
-        Role userRole = roleRepository.findByName("USER");
-        employee.setRoles(Collections.singleton(userRole));
-
         if (employee.getPatronymic() != null && employee.getPatronymic().isBlank()) {
             employee.setPatronymic(null);
         }
+
+        Role userRole = roleRepository.findByName("USER");
+        employee.setRoles(Collections.singleton(userRole));
 
         employee = employeeRepository.save(employee);
         LOG.info(format("Successfully registered user %s with id %d", employee.getLogin(), employee.getId()));
@@ -101,14 +98,24 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     }
 
     @Override
-    public void delete(long id) {
+    public void update(String login, Employee newEmployee) {
+        Employee oldEmployee = employeeRepository.findByLogin(login);
+        if (newEmployee == null) {
+            throw new NoSuchElementException(format("Employee with login %s doesn't exist.", login));
+        }
 
+        oldEmployee.setFirstName(newEmployee.getFirstName());
+        oldEmployee.setSurname(newEmployee.getSurname());
+        oldEmployee.setPosition(newEmployee.getPosition());
+        oldEmployee.setPatronymic(newEmployee.getPatronymic() != null && newEmployee.getPatronymic().isBlank() ?
+            null : newEmployee.getPatronymic());
+
+        employeeRepository.save(oldEmployee);
+        LOG.info(format("Successfully updated user %s with id %d", oldEmployee.getLogin(), oldEmployee.getId()));
     }
 
-    private void confirmPassword(String password, String passwordConfirm) {
-        if (!password.equals(passwordConfirm)) {
-            throw new PasswordsEqualException(
-                format("Passwords are equal. Password: %s, confirm password: %s", password, passwordConfirm));
-        }
+    @Override
+    public void delete(long id) {
+
     }
 }

@@ -14,8 +14,8 @@
         <main class="px-3">
             <div th:object="${employee}">
                 <!--                <a class="text-black" href="customerList.html" th:href="@{/customer}"><i class="bi bi-chevron-left"></i></a>-->
-                <h2 th:text="|*{surname} *{firstName} *{patronymic}|">Имя Фамилия Отчество</h2>
-                <p th:text="|@*{login}|"></p>
+                <h2 th:text="|*{surname} *{firstName} *{patronymic ?: ''}|">Имя Фамилия Отчество</h2>
+                <h6 class="text-muted" th:text="|@*{login}|"></h6>
                 <p th:text="|Должность: *{position}|"></p>
 
                 <form class="form" th:method="POST" th:action="@{/logout}">

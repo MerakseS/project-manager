@@ -26,7 +26,10 @@ public class DefaultProjectService implements ProjectService {
     @Override
     @Transactional
     public void create(Project project) {
+        project.getParticipants().add(project.getCreator());
 
+        project = projectRepository.save(project);
+        LOG.info(format("Successfully created project with id %d", project.getId()));
     }
 
     @Override

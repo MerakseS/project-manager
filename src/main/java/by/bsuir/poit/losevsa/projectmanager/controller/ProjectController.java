@@ -76,13 +76,16 @@ public class ProjectController {
     }
 
     @GetMapping("/new")
-    public String showNewProjectPage(@ModelAttribute(PROJECT_ATTRIBUTE_NAME) Project project) {
+    public String showNewProjectPage(@ModelAttribute("projectDto") CreateProjectDto project,
+        Model model) {
+        List<Employee> employeeList = employeeService.getAll();
+        model.addAttribute("employeeList", employeeList);
         return NEW_PROJECT_PAGE_PATH;
     }
 
     @PostMapping
     public String createProject(Authentication authentication,
-        @ModelAttribute(PROJECT_ATTRIBUTE_NAME) @Valid CreateProjectDto projectDto,
+        @ModelAttribute("projectDto") @Valid CreateProjectDto projectDto,
         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {

@@ -23,7 +23,7 @@ public class MainController {
                 return "redirect:/project/admin";
             }
             if (authority.getAuthority().equals("ROLE_USER")) {
-                return "redirect:/profile";
+                return "redirect:/project";
             }
         }
 

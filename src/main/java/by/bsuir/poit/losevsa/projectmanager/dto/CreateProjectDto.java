@@ -32,12 +32,32 @@ public class CreateProjectDto implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Long getCreatorId() {
         return creatorId;
+    }
+
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public List<Long> getParticipantsId() {
+        return participantsId;
+    }
+
+    public void setParticipantsId(List<Long> participantsId) {
+        this.participantsId = participantsId;
     }
 
     @Override
@@ -65,13 +85,5 @@ public class CreateProjectDto implements Serializable {
             "name = " + name + ", " +
             "description = " + description + ", " +
             "creatorId = " + creatorId + ")";
-    }
-
-    public List<Long> getParticipantsId() {
-        return participantsId;
-    }
-
-    public void setParticipantsId(List<Long> participantsId) {
-        this.participantsId = participantsId;
     }
 }

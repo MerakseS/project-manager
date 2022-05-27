@@ -1,16 +1,15 @@
 package by.bsuir.poit.losevsa.projectmanager.entity;
 
-import java.util.List;
+import java.util.Objects;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.hibernate.Hibernate;
 
 @Entity
 @Table(name = "role")
@@ -23,10 +22,6 @@ public class Role {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @Transient
-    @ManyToMany(mappedBy = "roles")
-    private List<Employee> employees;
 
     public Long getId() {
         return id;
@@ -44,11 +39,20 @@ public class Role {
         this.name = name;
     }
 
-    public List<Employee> getEmployees() {
-        return employees;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        Role role = (Role) o;
+        return id != null && Objects.equals(id, role.id);
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

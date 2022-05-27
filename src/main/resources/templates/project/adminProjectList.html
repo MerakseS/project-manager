@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Список проектов')">
+    <title>Список проектов</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div th:replace="fragment/navbar::navbar"></div>
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <main class="px-3">
+            <h1>Список проектов</h1>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Описание</th>
+                    <th scope="col">Создатель</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projectList}" th:object="${project}">
+                    <th scope="row" th:text="*{id}"></th>
+                    <td th:text="*{name}"></td>
+                    <td style="white-space: nowrap; text-overflow:ellipsis; overflow: hidden; max-width: 300px;"
+                        th:text="*{description}"></td>
+                    <td th:text="*{creator.login}"></td>
+                    <td class="text-end">
+                        <form th:action="@{/project/{id}(id=*{id})}" th:method="DELETE">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
+                                <a class="btn btn-outline-secondary" th:href="@{/project/{id}(id=*{id})}">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a class="btn btn-outline-secondary" th:href="@{/project/{id}/edit(id=*{id})}">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="newProject.html" th:href="@{/project/new}">Добавить проект</a>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

@@ -1,5 +1,9 @@
 package by.bsuir.poit.losevsa.projectmanager.entity;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +20,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -60,11 +65,30 @@ public class Employee {
     @Column(name = "position", nullable = false, length = 30)
     private String position;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "employee_roles",
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "employee_role",
         joinColumns = @JoinColumn(name = "employee_id"),
-        inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private Set<Role> roles;
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new LinkedHashSet<>();
+
+    @ManyToMany(mappedBy = "participants")
+    private List<Project> projects = new ArrayList<>();
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
     public Long getId() {
         return id;
@@ -122,11 +146,20 @@ public class Employee {
         this.position = position;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        Employee employee = (Employee) o;
+        return id != null && Objects.equals(id, employee.id);
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

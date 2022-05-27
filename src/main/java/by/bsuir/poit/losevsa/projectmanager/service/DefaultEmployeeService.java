@@ -67,7 +67,7 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
             employee.setPatronymic(null);
         }
 
-        Role userRole = roleRepository.findByName("USER");
+        Role userRole = roleRepository.getReferenceByName("USER");
         employee.setRoles(Collections.singleton(userRole));
 
         employee = employeeRepository.save(employee);
@@ -134,12 +134,7 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     @Override
     @Transactional
     public void delete(long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow();
-
-        for (Role role : employee.getRoles()) {
-            employee.getRoles().remove(role);
-        }
-
+        Employee employee = employeeRepository.getReferenceById(id);
         employeeRepository.delete(employee);
         LOG.info(format("Successfully deleted employee with id %d", id));
     }

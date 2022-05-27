@@ -41,8 +41,6 @@ public class EmployeeController {
     private static final String EDIT_EMPLOYEE_PAGE_PATH = "employee/editEmployee";
     private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
 
-    private static final String LOGIN_REDIRECT = "redirect:/login";
-    private static final String PROFILE_REDIRECT = "redirect:/profile";
     private static final String EMPLOYEE_LIST_REDIRECT = "redirect:/employee";
 
     private final EmployeeService employeeService;

@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -88,11 +89,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
     public String getUserProfilePage(Authentication authentication, Model model) {
-        if (authentication == null) {
-            return LOGIN_REDIRECT;
-        }
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Employee employee = employeeService.getByLogin(userDetails.getUsername());
         model.addAttribute(EMPLOYEE_ATTRIBUTE_NAME, employee);
@@ -101,11 +99,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
     public String showEditProfilePage(Authentication authentication, Model model) {
-        if (authentication == null) {
-            return LOGIN_REDIRECT;
-        }
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Employee employee = employeeService.getByLogin(userDetails.getUsername());
         model.addAttribute(EMPLOYEE_ATTRIBUTE_NAME, employee);
@@ -114,13 +109,10 @@ public class AuthenticationController {
     }
 
     @PutMapping("/profile")
+    @PreAuthorize("isAuthenticated()")
     public String updateEmployee(Authentication authentication,
         @ModelAttribute(EMPLOYEE_ATTRIBUTE_NAME) @Valid EmployeeEditDto employeeDto, BindingResult bindingResult) {
         try {
-            if (authentication == null) {
-                return LOGIN_REDIRECT;
-            }
-
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't update employee cause: %s", bindingResult));
                 return EDIT_EMPLOYEE_PAGE_PATH;

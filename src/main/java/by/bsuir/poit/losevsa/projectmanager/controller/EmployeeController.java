@@ -79,7 +79,7 @@ public class EmployeeController {
             return EDIT_EMPLOYEE_PAGE_PATH;
         }
         catch (NoSuchElementException e) {
-            return handleNoSuchElementException("Can't show edit form of customer with id %d", id, e, model);
+            return handleNoSuchElementException("Can't show edit form of employee with id %d", id, e, model);
         }
     }
 
@@ -111,13 +111,13 @@ public class EmployeeController {
             return EMPLOYEE_LIST_REDIRECT;
         }
         catch (NoSuchElementException e) {
-            return handleNoSuchElementException("Can't delete customer with id %d", id, e, model);
+            return handleNoSuchElementException("Can't delete employee with id %d", id, e, model);
         }
     }
 
     private String handleNoSuchElementException(String logMessage, long id, NoSuchElementException exception, Model model) {
         LOG.warn(format(logMessage, id), exception);
-        model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Клиента с id %d не существует :(", id));
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Пользователя с id %d не существует :(", id));
         return NOT_FOUND_PAGE_PATH;
     }
 }

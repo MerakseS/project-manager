@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.repository.ProjectRepository;
 
@@ -35,14 +36,10 @@ public class DefaultProjectService implements ProjectService {
     }
 
     @Override
-    public List<Project> getListByEmployeeLogin(String login) {
-        LOG.info(format("Getting projects by login %s", login));
-        return projectRepository.findDistinctProjectByParticipants_LoginContaining(login);
-    }
-
-    @Override
     public Project get(long id) {
-        return null;
+        Project project = projectRepository.findById(id).orElseThrow();
+        LOG.info(format("Successfully got project with id %d", id));
+        return project;
     }
 
     @Override

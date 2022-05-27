@@ -10,8 +10,6 @@ public interface ProjectService {
 
     List<Project> getAll();
 
-    List<Project> getListByEmployeeLogin(String login);
-
     Project get(long id);
 
     void update(long id, Project project);

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Project manager')">
+    <title>Project manager</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div class="mb-auto">
+    <div th:replace="fragment/navbar::navbar"></div>
+</div>
+
+<main class="flex-shrink-0">
+    <div class="container d-flex w-25 p-3 mx-auto flex-column text-center">
+        <main class="px-3">
+            <h1>Меню</h1>
+            <a class="btn btn-lg btn-outline-primary w-100 mb-4"
+               th:href="@{/employee}">
+                Сотрудники
+            </a>
+            <a class="btn btn-lg btn-outline-primary w-100 mb-4"
+               th:href="@{/project/admin}">
+                Проекты
+            </a>
+            <a class="btn btn-lg btn-outline-primary w-100 mb-4"
+               th:href="@{/task/admin}">
+                Задачи
+            </a>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

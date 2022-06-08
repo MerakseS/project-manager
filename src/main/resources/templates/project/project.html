@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/header::header('Project manager')">
+<head th:replace="fragment/header::header(${project.name})">
     <title>Project manager</title>
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 bg-light">
 
 <div class="mb-auto">
     <div th:replace="fragment/navbar::navbar"></div>

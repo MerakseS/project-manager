@@ -4,48 +4,49 @@
     <meta charset="UTF-8">
     <title>Создание проекта</title>
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 bg-light">
 
 <div th:replace="fragment/navbar::navbar"></div>
 
 <main class="flex-shrink-0">
     <div class="container">
-        <h3 class="mb-3">Новый проект</h3>
         <form th:object="${projectDto}" th:method="POST" th:action="@{/project}">
-            <div class="row justify-content-center g-3">
-                <div class="col-md-12 has-validation">
-                    <label for="name" class="form-label">Название</label>
-                    <input id="name" type="text" th:field="*{name}"
-                           th:class="|form-control ${#fields.hasErrors('name') ? 'is-invalid' : ''}|">
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
-                        Valid first name is required.
+            <div class="row justify-content-center">
+                <div class="row row-cols-1 w-50 g-3">
+                    <h1 class="col">Новый проект</h1>
+                    <div class="col has-validation">
+                        <label for="name" class="form-label">Название</label>
+                        <input id="name" type="text" th:field="*{name}"
+                               th:class="|form-control ${#fields.hasErrors('name') ? 'is-invalid' : ''}|">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            Valid first name is required.
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-12">
-                    <label for="description" class="form-label">Описание</label>
-                    <textarea id="description" th:field="*{description}" rows="3"
-                              th:class="|form-control ${#fields.hasErrors('description') ? 'is-invalid' : ''}|"></textarea>
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
-                        Valid surname is required.
+                    <div class="col">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea id="description" th:field="*{description}" rows="3"
+                                  th:class="|form-control ${#fields.hasErrors('description') ? 'is-invalid' : ''}|"></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                            Valid surname is required.
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-12">
-                    <label for="participantsId" class="form-label">Участники</label>
-                    <select type="date" id="participantsId" class="form-select" th:field="*{participantsId}" multiple>
-                        <option th:each="employee : ${employeeList}"
-                                th:if="${not (#strings.equals(employee.login, #authentication.name) || #strings.equals(employee.login, 'admin'))}"
-                                th:value="${employee.id}"
-                                th:text="|${employee.firstName} ${employee.surname}|">
-                        </option>
-                    </select>
+                    <div class="col">
+                        <label for="participantsId" class="form-label">Участники</label>
+                        <select type="date" id="participantsId" class="form-select" th:field="*{participantsId}" multiple>
+                            <option th:each="employee : ${employeeList}" th:value="${employee.id}"
+                                    th:text="|${employee.firstName} ${employee.surname}|">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-primary btn-lg" type="submit">Создать проект</button>
+                        <a class="btn btn-secondary btn-lg" href="userProjectList.html" th:href="@{/project}">Отмена</a>
+                    </div>
                 </div>
             </div>
-
-            <br/>
-            <button class="btn btn-primary btn-lg" type="submit">Создать проект</button>
-            <a class="btn btn-secondary btn-lg" href="userProjectList.html" th:href="@{/project}">Отмена</a>
         </form>
     </div>
 </main>

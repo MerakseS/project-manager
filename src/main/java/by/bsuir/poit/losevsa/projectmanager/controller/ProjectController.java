@@ -1,6 +1,7 @@
 package by.bsuir.poit.losevsa.projectmanager.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import static java.lang.String.format;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import by.bsuir.poit.losevsa.projectmanager.dto.CreateProjectDto;
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
+import by.bsuir.poit.losevsa.projectmanager.entity.Role;
 import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
 import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
 
@@ -44,6 +46,7 @@ public class ProjectController {
     private static final String ADMIN_PROJECT_LIST_PATH = "project/adminProjectList";
     private static final String NEW_PROJECT_PAGE_PATH = "project/newProject";
     private static final String PROJECT_PAGE_PATH = "project/project";
+    private static final String PROJECT_DETAILS_PATH = "project/projectDetails";
     private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
 
     private static final String PROJECT_REDIRECT = "redirect:/project";
@@ -76,9 +79,10 @@ public class ProjectController {
     }
 
     @GetMapping("/new")
-    public String showNewProjectPage(@ModelAttribute("projectDto") CreateProjectDto project,
+    public String showNewProjectPage(Authentication authentication, @ModelAttribute("projectDto") CreateProjectDto project,
         Model model) {
-        List<Employee> employeeList = employeeService.getAll();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        List<Employee> employeeList = getParticipantsList(userDetails.getUsername());
         model.addAttribute("employeeList", employeeList);
         return NEW_PROJECT_PAGE_PATH;
     }
@@ -86,16 +90,17 @@ public class ProjectController {
     @PostMapping
     public String createProject(Authentication authentication,
         @ModelAttribute("projectDto") @Valid CreateProjectDto projectDto,
-        BindingResult bindingResult) {
+        BindingResult bindingResult, Model model) {
 
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         if (bindingResult.hasErrors()) {
             LOG.warn(format("Can't save project cause: %s", bindingResult));
+            List<Employee> employeeList = getParticipantsList(userDetails.getUsername());
+            model.addAttribute("employeeList", employeeList);
             return NEW_PROJECT_PAGE_PATH;
         }
 
         Project project = modelMapper.map(projectDto, Project.class);
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         project.setCreator(employeeService.getByLogin(userDetails.getUsername()));
 
         List<Employee> participants = new ArrayList<>();
@@ -105,7 +110,6 @@ public class ProjectController {
         project.setParticipants(participants);
 
         projectService.create(project);
-
         return PROJECT_REDIRECT;
     }
 
@@ -113,26 +117,60 @@ public class ProjectController {
     public String showProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Employee employee = employeeService.getByLogin(userDetails.getUsername());
-            Project project = null;
-            for (Project employeeProject : employee.getProjects()) {
-                if (employeeProject.getId() == id) {
-                    project = employeeProject;
-                    break;
-                }
-            }
-
-            if (project == null) {
-                throw new NoSuchElementException(format("Employee with login %s doesn't have project with id %d.",
-                    userDetails.getUsername(), id));
-            }
-
+            Project project = getEmployeeProject(id, userDetails.getUsername());
             model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
             return PROJECT_PAGE_PATH;
         }
         catch (NoSuchElementException e) {
             return handleNoSuchElementException("Can't show project with id %d", id, e, model);
         }
+    }
+
+    @GetMapping("/{id}/details")
+    public String showProjectDetails(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Project project = getEmployeeProject(id, userDetails.getUsername());
+            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
+            return PROJECT_DETAILS_PATH;
+        }
+        catch (NoSuchElementException e) {
+            return handleNoSuchElementException("Can't show details of project with id %d", id, e, model);
+        }
+    }
+
+    private List<Employee> getParticipantsList(String creatorLogin) {
+        List<Employee> employeeList = employeeService.getAll();
+        for (Iterator<Employee> iterator = employeeList.iterator(); iterator.hasNext(); ) {
+            Employee employee = iterator.next();
+            if (employee.getLogin().equals(creatorLogin)) {
+                iterator.remove();
+                continue;
+            }
+
+            for (Role role : employee.getRoles()) {
+                if (role.getName().equals("ADMIN")) {
+                    iterator.remove();
+                }
+            }
+        }
+        return employeeList;
+    }
+
+    private Project getEmployeeProject(long id, String login) {
+        Employee employee = employeeService.getByLogin(login);
+        Project project = null;
+        for (Project employeeProject : employee.getProjects()) {
+            if (employeeProject.getId() == id) {
+                project = employeeProject;
+                break;
+            }
+        }
+        if (project == null) {
+            throw new NoSuchElementException(format("Employee with login %s doesn't have project with id %d.",
+                login, id));
+        }
+        return project;
     }
 
     private String handleNoSuchElementException(String logMessage, long id, NoSuchElementException exception, Model model) {

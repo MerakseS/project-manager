@@ -5,8 +5,9 @@ VALUES ('USER'),
 INSERT INTO employee (first_name, login, password, patronymic, position, surname)
 VALUES ('admin', 'admin', '$2a$10$5eSuRQNBty4fLOQvO4UkeeplhQa11QC.VrZK.3USq6pdNDQ4ApQKW', null, 'admin', 'admin'),
        ('Сергей', 'merakses', '$2a$10$wfaOJTF5j3LTaILuxB0jYu15s0m/MkqOI0hehEK5bloxdzGxHYok.', 'Александрович', 'Стажер', 'Лосев'),
-       ('Светлана', 'login', '$2a$10$wfaOJTF5j3LTaILuxB0jYu15s0m/MkqOI0hehEK5bloxdzGxHYok.', 'Андреевна', 'Тестировщик',
-        'Маткина');
+       ('Светлана', 'login', '$2a$10$wfaOJTF5j3LTaILuxB0jYu15s0m/MkqOI0hehEK5bloxdzGxHYok.', 'Андреевна', 'Тестировщик', 'Маткина'),
+       ('Иван', 'ivan', '$2a$10$wfaOJTF5j3LTaILuxB0jYu15s0m/MkqOI0hehEK5bloxdzGxHYok.', 'Иванович', 'Разработчик', 'Иванов'),
+       ('Пётр', 'petr', '$2a$10$wfaOJTF5j3LTaILuxB0jYu15s0m/MkqOI0hehEK5bloxdzGxHYok.', 'Петрович', 'HR', 'Петров');
 
 INSERT INTO employee_role (employee_id, role_id)
 VALUES (1, 1),

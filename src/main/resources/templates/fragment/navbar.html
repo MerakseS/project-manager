@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="flex-shrink-0" th:fragment="navbar">
-    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between p-2 mb-4 border-bottom">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between p-2 mb-4 bg-white border-bottom">
         <a class="d-flex align-items-center col-md-4 mb-2 mb-md-0 text-dark text-decoration-none"
            href="../index.html" th:href="@{/}">
             <i class="bi bi-kanban fs-3 me-2"></i>
@@ -19,7 +19,7 @@
         </div>
 
         <div sec:authorize="isAuthenticated()">
-            <a th:if="${project}" class="btn btn-outline-secondary me-1" th:href="@{/project/edit/{id}/edit(id=*{project.id})}">
+            <a th:if="${project}" class="btn btn-outline-secondary me-1" th:href="@{/project/{id}/details(id=*{project.id})}">
                 <i class="bi bi-gear-fill"></i>
             </a>
             <div class="btn-group">

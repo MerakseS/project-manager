@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -51,6 +52,28 @@ public class Project {
         joinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "participant_id", referencedColumnName = "id"))
     private List<Employee> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskList> taskLists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskStatus> taskStatuses = new LinkedHashSet<>();
+
+    public Set<TaskStatus> getTaskStatuses() {
+        return taskStatuses;
+    }
+
+    public void setTaskStatuses(Set<TaskStatus> taskStatuses) {
+        this.taskStatuses = taskStatuses;
+    }
+
+    public List<TaskList> getTaskLists() {
+        return taskLists;
+    }
+
+    public void setTaskLists(List<TaskList> taskLists) {
+        this.taskLists = taskLists;
+    }
 
     public List<Employee> getParticipants() {
         return participants;

@@ -1,6 +1,8 @@
 package by.bsuir.poit.losevsa.projectmanager.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import static java.lang.String.format;
 
 import org.slf4j.Logger;
@@ -8,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.repository.ProjectRepository;
 
@@ -27,6 +28,10 @@ public class DefaultProjectService implements ProjectService {
     @Transactional
     public void create(Project project) {
         project.getParticipants().add(project.getCreator());
+
+        if (project.getDescription() != null && project.getDescription().isBlank()) {
+            project.setDescription(null);
+        }
 
         project = projectRepository.save(project);
         LOG.info(format("Successfully created project with id %d", project.getId()));
@@ -47,8 +52,22 @@ public class DefaultProjectService implements ProjectService {
 
     @Override
     @Transactional
-    public void update(long id, Project project) {
+    public void update(long id, Project newProject) {
+        Optional<Project> optionalProject = projectRepository.findById(id);
+        if (optionalProject.isEmpty()) {
+            throw new NoSuchElementException(format("Project with id %d doesn't exist.", id));
+        }
 
+        Project oldProject = optionalProject.get();
+        oldProject.setName(newProject.getName());
+        oldProject.setDescription(newProject.getDescription() != null && newProject.getDescription().isBlank() ?
+            null : newProject.getDescription());
+
+        newProject.getParticipants().add(newProject.getCreator());
+        oldProject.setParticipants(newProject.getParticipants());
+
+        projectRepository.save(oldProject);
+        LOG.info(format("Successfully updated project with id %d", oldProject.getId()));
     }
 
     @Override

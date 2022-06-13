@@ -9,23 +9,36 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-public class CreateProjectDto implements Serializable {
+public class EditProjectDto implements Serializable {
+
+    private long id;
 
     @NotBlank(message = "Название должно быть заполнено")
     @Length(message = "Длина от 2 до 50 символов", min = 2, max = 50)
     @NotNull(message = "Название должно быть заполнено")
     private String name;
+
+    @Length(message = "Длина не больше 255 символов.", max = 255)
     private String description;
-    private Long creatorId;
+
     private List<Long> participantsId;
 
-    public CreateProjectDto() {}
+    public EditProjectDto() {
+    }
 
-    public CreateProjectDto(String name, String description, Long creatorId, List<Long> participantsId) {
+    public EditProjectDto(long id, String name, String description, List<Long> participantsId) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.creatorId = creatorId;
         this.participantsId = participantsId;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -44,14 +57,6 @@ public class CreateProjectDto implements Serializable {
         this.description = description;
     }
 
-    public Long getCreatorId() {
-        return creatorId;
-    }
-
-    public void setCreatorId(Long creatorId) {
-        this.creatorId = creatorId;
-    }
-
     public List<Long> getParticipantsId() {
         return participantsId;
     }
@@ -68,22 +73,22 @@ public class CreateProjectDto implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CreateProjectDto entity = (CreateProjectDto) o;
-        return Objects.equals(this.name, entity.name) &&
-            Objects.equals(this.description, entity.description) &&
-            Objects.equals(this.creatorId, entity.creatorId);
+        EditProjectDto that = (EditProjectDto) o;
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(participantsId, that.participantsId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, creatorId);
+        return Objects.hash(id, name, description, participantsId);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" +
-            "name = " + name + ", " +
-            "description = " + description + ", " +
-            "creatorId = " + creatorId + ")";
+        return "EditProjectDto{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", participantsId=" + participantsId +
+            '}';
     }
 }

@@ -84,7 +84,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public String updateCustomer(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+    public String updateEmployee(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
         @ModelAttribute(EMPLOYEE_ATTRIBUTE_NAME) @Valid EmployeeEditDto employeeDto,
         BindingResult bindingResult,
         Model model) {

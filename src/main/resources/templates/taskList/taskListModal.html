@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Project manager')">
+    <title>Project manager</title>
+</head>
+
+<body>
+
+<div class="modal fade" id="taskListModal" tabindex="-1" aria-labelledby="taskListModalLabel" aria-hidden="true" th:fragment="taskListModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:object="${taskListDto}" th:method="POST" th:action="@{/taskList}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="taskListModalLabel">Добавить список задач</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="name" class="form-label">Название</label>
+                    <input id="name" type="text" th:field="*{name}" class="form-control">
+                    <input type="hidden" name="projectId" th:value="${project.id}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

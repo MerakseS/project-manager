@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import by.bsuir.poit.losevsa.projectmanager.dto.EditProjectDto;
+import by.bsuir.poit.losevsa.projectmanager.dto.TaskListDto;
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.Role;
@@ -119,7 +120,9 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public String showProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
+    public String showProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        @ModelAttribute("taskListDto") TaskListDto taskListDto,
+        Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Project project = getEmployeeProject(id, userDetails.getUsername());

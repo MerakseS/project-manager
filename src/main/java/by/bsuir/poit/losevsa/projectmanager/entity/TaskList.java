@@ -13,6 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "task_list")
@@ -23,6 +27,9 @@ public class TaskList {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Length(message = "Длина названия списка задач от 2 до 30", min = 2, max = 30)
+    @NotNull(message = "Название списка задач должно быть заполнено")
+    @NotBlank(message = "Название списка задач должно быть заполнено")
     @Column(name = "name", nullable = false, length = 30)
     private String name;
 

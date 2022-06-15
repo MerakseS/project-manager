@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
 
     private static final String HOME_PAGE_NAME = "index";
+    private static final String ADMIN_MENU_PATH = "employee/adminMenu";
+    private static final String PROJECT_LIST_REDIRECT = "redirect:/project";
 
     @GetMapping
     public String showHomePage(Authentication authentication) {
@@ -20,13 +22,10 @@ public class MainController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         for (GrantedAuthority authority : userDetails.getAuthorities()) {
             if (authority.getAuthority().equals("ROLE_ADMIN")) {
-                return "employee/adminMenu";
-            }
-            if (authority.getAuthority().equals("ROLE_USER")) {
-                return "redirect:/project";
+                return ADMIN_MENU_PATH;
             }
         }
 
-        return HOME_PAGE_NAME;
+        return PROJECT_LIST_REDIRECT;
     }
 }

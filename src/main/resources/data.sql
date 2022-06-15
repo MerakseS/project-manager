@@ -27,5 +27,7 @@ INSERT INTO project_participants (project_id, participant_id)
 VALUES (1, 2),
        (1, 3),
        (2, 2),
-       (4, 2);
+       (4, 2),
+       (4, 3),
+       (5, 1);
 

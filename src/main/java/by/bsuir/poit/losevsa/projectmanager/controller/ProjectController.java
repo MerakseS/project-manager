@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -165,9 +166,7 @@ public class ProjectController {
             return handleNoSuchElementException("Can't show edit page of project with id %d", id, e, model);
         }
         catch (NotAProjectCreatorException e) {
-            LOG.warn(format("Can't show edit page of project with id %d", id), e);
-            model.addAttribute(ERROR_ATTRIBUTE_NAME, "Вы не являетесь создателем данного проекта :(");
-            return FORBIDDEN_PAGE_PATH;
+            return handleNotAProjectCreatorException("Can't show edit page of project with id %d", id, e, model);
         }
     }
 
@@ -193,6 +192,30 @@ public class ProjectController {
         }
         catch (NoSuchElementException e) {
             return handleNoSuchElementException("Can't show edit page of project with id %d", id, e, model);
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public String deleteProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        Authentication authentication,
+        Model model) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Employee employee = employeeService.getByLogin(userDetails.getUsername());
+            Project project = projectService.get(id);
+            if (!Objects.equals(employee.getId(), project.getCreator().getId())) {
+                throw new NotAProjectCreatorException(format("User %s is not a creator of project with id %d",
+                    userDetails.getUsername(), id));
+            }
+
+            projectService.delete(id);
+            return PROJECT_LIST_REDIRECT;
+        }
+        catch (NoSuchElementException e) {
+            return handleNoSuchElementException("Can't delete project with id %d", id, e, model);
+        }
+        catch (NotAProjectCreatorException e) {
+            return handleNotAProjectCreatorException("Can't delete project with id %d", id, e, model);
         }
     }
 
@@ -234,6 +257,12 @@ public class ProjectController {
         LOG.warn(format(logMessage, id), exception);
         model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Проекта с id %d не существует :(", id));
         return NOT_FOUND_PAGE_PATH;
+    }
+
+    private String handleNotAProjectCreatorException(String logMessage, long id, NotAProjectCreatorException e, Model model) {
+        LOG.warn(format(logMessage, id), e);
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, "Вы не являетесь создателем данного проекта :(");
+        return FORBIDDEN_PAGE_PATH;
     }
 
     private Project convertToProject(EditProjectDto projectDto) {

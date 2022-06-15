@@ -73,6 +73,8 @@ public class DefaultProjectService implements ProjectService {
     @Override
     @Transactional
     public void delete(long id) {
-
+        Project project = projectRepository.getReferenceById(id);
+        projectRepository.delete(project);
+        LOG.info(format("Successfully deleted project with id %d", id));
     }
 }

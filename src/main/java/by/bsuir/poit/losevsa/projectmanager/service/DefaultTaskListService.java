@@ -50,6 +50,8 @@ public class DefaultTaskListService implements TaskListService {
     @Override
     @Transactional
     public void delete(long id) {
-
+        TaskList taskList = taskListRepository.getReferenceById(id);
+        taskListRepository.delete(taskList);
+        LOG.info(format("Successfully deleted task list with id %d", id));
     }
 }

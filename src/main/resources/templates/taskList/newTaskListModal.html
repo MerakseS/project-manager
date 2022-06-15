@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/header::header('Project manager')">
+<head>
     <title>Project manager</title>
 </head>
 
 <body>
 
-<div class="modal fade" id="taskListModal" tabindex="-1" aria-labelledby="taskListModalLabel" aria-hidden="true" th:fragment="taskListModal">
+<div class="modal fade" id="newTaskListModal" tabindex="-1" aria-labelledby="newTaskListModalLabel" aria-hidden="true"
+     th:fragment="newTaskListModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <form th:object="${taskListDto}" th:method="POST" th:action="@{/taskList}">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="taskListModalLabel">Добавить список задач</h5>
+                    <h5 class="modal-title" id="newTaskListModalLabel">Добавить список задач</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">

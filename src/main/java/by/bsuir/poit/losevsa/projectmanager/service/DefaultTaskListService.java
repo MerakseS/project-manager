@@ -43,8 +43,12 @@ public class DefaultTaskListService implements TaskListService {
 
     @Override
     @Transactional
-    public void update(long id, TaskList task) {
+    public void update(long id, TaskList newTaskList) {
+        TaskList oldTaskList = taskListRepository.findById(id).orElseThrow();
+        oldTaskList.setName(newTaskList.getName());
 
+        taskListRepository.save(oldTaskList);
+        LOG.info(format("Successfully updated task list with id %d", id));
     }
 
     @Override

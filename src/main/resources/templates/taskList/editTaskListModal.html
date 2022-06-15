@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Project manager</title>
+</head>
+
+<body>
+
+<div class="modal fade" id="editTaskListModal" tabindex="-1" aria-labelledby="editTaskListModalLabel" aria-hidden="true"
+     th:fragment="editTaskListModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:method="PUT" th:object="${taskListDto}" th:action="@{/taskList/0}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskListModalLabel">Изменить список задач</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="name" class="form-label">Название</label>
+                    <input id="name" th:field="*{name}" type="text" class="form-control">
+                    <input type="hidden" name="projectId" th:value="${project.id}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const editTaskListModal = document.getElementById('editTaskListModal');
+        editTaskListModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const id = button.getAttribute('data-id');
+            const form = editTaskListModal.querySelector('.modal-content form');
+            form.action = '/taskList/' + id;
+
+            const name = button.getAttribute('data-name');
+            const nameInput = editTaskListModal.querySelector('.form-control')
+            nameInput.value = name;
+        });
+    </script>
+</div>
+
+</body>
+</html>

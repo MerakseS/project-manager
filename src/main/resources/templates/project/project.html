@@ -23,7 +23,12 @@
                                 <i class="bi bi-three-dots"></i>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" th:href="@{/taskList/{id}/edit(id=*{id})}">Изменить список задач</a></li>
+                                <li>
+                                    <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editTaskListModal"
+                                    th:attr="data-id=*{id},data-name=*{name}">
+                                        Изменить список задач
+                                    </button>
+                                </li>
                                 <li>
                                     <form th:action="@{/taskList/{id}(id=*{id})}" th:method="DELETE">
                                         <input type="hidden" name="projectId" th:value="${project.id}">
@@ -34,7 +39,7 @@
                         </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#taskListModal"
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#newTaskListModal"
                     style="min-width : 250px; width : 250px; max-width: 250px">
                 Добавить список задач
             </button>
@@ -42,7 +47,8 @@
     </div>
 </main>
 
-<div th:replace="taskList/taskListModal::taskListModal"></div>
+<div th:replace="taskList/newTaskListModal::newTaskListModal"></div>
+<div th:replace="taskList/editTaskListModal::editTaskListModal"></div>
 
 </body>
 </html>

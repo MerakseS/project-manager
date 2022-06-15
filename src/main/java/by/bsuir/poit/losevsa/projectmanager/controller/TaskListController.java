@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -64,6 +65,26 @@ public class TaskListController {
         taskListService.create(taskList);
 
         return format(PROJECT_REDIRECT, taskListDto.getProjectId());
+    }
+
+    @PutMapping("/{id}")
+    String updateProjectTaskList(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        @ModelAttribute(TASK_LIST_DTO_ATTRIBUTE_NAME) @Valid TaskListDto taskListDto,
+        BindingResult bindingResult, Model model) {
+        try {
+            if (bindingResult.hasErrors()) {
+                LOG.warn(format("Can't create task list cause: %s", bindingResult));
+                return format(PROJECT_REDIRECT, taskListDto.getProjectId());
+            }
+
+            TaskList taskList = convertToTaskList(taskListDto);
+            taskListService.update(id, taskList);
+
+            return format(PROJECT_REDIRECT, taskListDto.getProjectId());
+        }
+        catch (NoSuchElementException e) {
+            return handleNoSuchElementException("Can't update taskList with id %d", id, e, model);
+        }
     }
 
     @DeleteMapping("/{id}")

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.repository.ProjectRepository;
 
@@ -76,5 +77,12 @@ public class DefaultProjectService implements ProjectService {
         Project project = projectRepository.getReferenceById(id);
         projectRepository.delete(project);
         LOG.info(format("Successfully deleted project with id %d", id));
+    }
+
+    @Override
+    public void deleteParticipant(Project project, Employee employee) {
+        project.getParticipants().remove(employee);
+        projectRepository.save(project);
+        LOG.info(format("Successfully deleted participant from project with id %d", project.getId()));
     }
 }

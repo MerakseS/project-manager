@@ -31,6 +31,7 @@ import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.Role;
 import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectCreatorException;
+import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
 import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
 import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
 
@@ -197,8 +198,7 @@ public class ProjectController {
 
     @DeleteMapping("{id}")
     public String deleteProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
-        Authentication authentication,
-        Model model) {
+        Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Employee employee = employeeService.getByLogin(userDetails.getUsername());
@@ -216,6 +216,33 @@ public class ProjectController {
         }
         catch (NotAProjectCreatorException e) {
             return handleNotAProjectCreatorException("Can't delete project with id %d", id, e, model);
+        }
+    }
+
+    @DeleteMapping("/{id}/exit")
+    public String exitProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        Authentication authentication, Model model) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Project project = projectService.get(id);
+            Employee employee = null;
+            for (Employee participant : project.getParticipants()) {
+                if (participant.getLogin().equals(userDetails.getUsername())) {
+                    employee = participant;
+                }
+            }
+            if (employee == null) {
+                throw new NotAProjectParticipantException(format("User %s is not a participant of project with id %d",
+                    userDetails.getUsername(), id));
+            }
+
+            projectService.deleteParticipant(project, employee);
+            return PROJECT_LIST_REDIRECT;
+        }
+        catch (NotAProjectCreatorException e) {
+            LOG.warn(format("Can't remove participant from project with id %d", id), e);
+            model.addAttribute(ERROR_ATTRIBUTE_NAME, "Вы не являетесь создателем данного проекта :(");
+            return FORBIDDEN_PAGE_PATH;
         }
     }
 

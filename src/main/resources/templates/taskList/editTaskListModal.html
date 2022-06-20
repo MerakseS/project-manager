@@ -6,8 +6,8 @@
 
 <body>
 
-<div class="modal fade" id="editTaskListModal" tabindex="-1" aria-labelledby="editTaskListModalLabel" aria-hidden="true"
-     th:fragment="editTaskListModal">
+<div class="modal fade" id="editTaskListModal" tabindex="-1" aria-labelledby="editTaskListModalLabel"
+     aria-hidden="true" th:fragment="editTaskListModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <form th:method="PUT" th:object="${taskListDto}" th:action="@{/taskList/0}">

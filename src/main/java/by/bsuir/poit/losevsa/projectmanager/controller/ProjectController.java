@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,7 +60,7 @@ public class ProjectController {
     private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
     private static final String FORBIDDEN_PAGE_PATH = "pageForbidden";
 
-    private static final String PROJECT_LIST_REDIRECT = "redirect:/project";
+    private static final String PROJECT_LIST_REDIRECT = "redirect:/";
     private static final String PROJECT_DETAILS_REDIRECT = "redirect:/project/%d/details";
 
     private final ModelMapper modelMapper;
@@ -125,7 +126,7 @@ public class ProjectController {
         Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = getEmployeeProject(id, userDetails.getUsername());
+            Project project = getEmployeeProject(id, userDetails);
             model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
             return PROJECT_PAGE_PATH;
         }
@@ -138,7 +139,7 @@ public class ProjectController {
     public String showProjectDetails(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = getEmployeeProject(id, userDetails.getUsername());
+            Project project = getEmployeeProject(id, userDetails);
             model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
             return PROJECT_DETAILS_PATH;
         }
@@ -264,11 +265,18 @@ public class ProjectController {
                 }
             }
         }
+
         return employeeList;
     }
 
-    private Project getEmployeeProject(long projectId, String login) {
-        Employee employee = employeeService.getByLogin(login);
+    private Project getEmployeeProject(long projectId, UserDetails userDetails) {
+        for (GrantedAuthority authority : userDetails.getAuthorities()) {
+            if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                return projectService.get(projectId);
+            }
+        }
+
+        Employee employee = employeeService.getByLogin(userDetails.getUsername());
         Project project = null;
         for (Project employeeProject : employee.getProjects()) {
             if (employeeProject.getId() == projectId) {
@@ -276,10 +284,12 @@ public class ProjectController {
                 break;
             }
         }
+
         if (project == null) {
             throw new NoSuchElementException(format("Employee with login %s doesn't have project with id %d.",
-                login, projectId));
+                userDetails.getUsername(), projectId));
         }
+
         return project;
     }
 

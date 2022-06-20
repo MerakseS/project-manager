@@ -29,7 +29,17 @@
                     <li>
                         <a class="dropdown-item" href="../employee/employee.html" th:href="@{/profile}">Профиль</a>
                     </li>
-                    <li>
+                    <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}" class="dropdown-divider"></li>
+                    <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                        <a class="dropdown-item" href="#" th:href="@{/employee}">Сотрудники</a>
+                    </li>
+                    <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                        <a class="dropdown-item" href="#" th:href="@{/project/admin}">Проекты</a>
+                    </li>
+                    <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                        <a class="dropdown-item" href="#" th:href="@{/task/admin}">Задачи</a>
+                    </li>
+                    <li th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                         <a class="dropdown-item" href="#" th:href="@{/project}">Проекты</a>
                     </li>
                     <li class="dropdown-divider"></li>

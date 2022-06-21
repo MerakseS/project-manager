@@ -10,14 +10,14 @@ import org.hibernate.validator.constraints.Length;
 
 public class TaskListDto implements Serializable {
 
-    private final Long id;
+    private Long id;
 
     @Length(message = "Длина названия списка задач от 2 до 30", min = 2, max = 30)
     @NotNull(message = "Название списка задач должно быть заполнено")
     @NotBlank(message = "Название списка задач должно быть заполнено")
-    private final String name;
+    private String name;
 
-    private final Long projectId;
+    private Long projectId;
 
     public TaskListDto(Long id, String name, Long projectId) {
         this.id = id;
@@ -29,12 +29,24 @@ public class TaskListDto implements Serializable {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Long getProjectId() {
         return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     @Override

@@ -5,7 +5,6 @@ import static java.lang.String.format;
 
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,9 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import by.bsuir.poit.losevsa.projectmanager.dto.TaskListDto;
-import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
-import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
+import by.bsuir.poit.losevsa.projectmanager.mapper.Mapper;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskListService;
 
 @Controller
@@ -42,13 +40,11 @@ public class TaskListController {
 
     private static final String PROJECT_REDIRECT = "redirect:/project/%d";
 
-    private final ModelMapper modelMapper;
-    private final ProjectService projectService;
+    private final Mapper<TaskList, TaskListDto> taskListMapper;
     private final TaskListService taskListService;
 
-    public TaskListController(ModelMapper modelMapper, ProjectService projectService, TaskListService taskListService) {
-        this.modelMapper = modelMapper;
-        this.projectService = projectService;
+    public TaskListController(Mapper<TaskList, TaskListDto> taskListMapper, TaskListService taskListService) {
+        this.taskListMapper = taskListMapper;
         this.taskListService = taskListService;
     }
 
@@ -61,7 +57,7 @@ public class TaskListController {
             return format(PROJECT_REDIRECT, taskListDto.getProjectId());
         }
 
-        TaskList taskList = convertToTaskList(taskListDto);
+        TaskList taskList = taskListMapper.toEntity(taskListDto);
         taskListService.create(taskList);
 
         return format(PROJECT_REDIRECT, taskListDto.getProjectId());
@@ -77,7 +73,7 @@ public class TaskListController {
                 return format(PROJECT_REDIRECT, taskListDto.getProjectId());
             }
 
-            TaskList taskList = convertToTaskList(taskListDto);
+            TaskList taskList = taskListMapper.toEntity(taskListDto);
             taskListService.update(id, taskList);
 
             return format(PROJECT_REDIRECT, taskListDto.getProjectId());
@@ -104,13 +100,5 @@ public class TaskListController {
         LOG.warn(format(logMessage, id), exception);
         model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Списка задач с id %d не существует :(", id));
         return NOT_FOUND_PAGE_PATH;
-    }
-
-    private TaskList convertToTaskList(TaskListDto taskListDto) {
-        TaskList taskList = modelMapper.map(taskListDto, TaskList.class);
-        Project project = projectService.get(taskListDto.getProjectId());
-        taskList.setProject(project);
-
-        return taskList;
     }
 }

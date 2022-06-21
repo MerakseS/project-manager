@@ -1,4 +1,4 @@
-package by.bsuir.poit.losevsa.projectmanager.service;
+package by.bsuir.poit.losevsa.projectmanager.service.impl;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 import by.bsuir.poit.losevsa.projectmanager.repository.TaskListRepository;
+import by.bsuir.poit.losevsa.projectmanager.service.TaskListService;
 
 @Service
 public class DefaultTaskListService implements TaskListService {

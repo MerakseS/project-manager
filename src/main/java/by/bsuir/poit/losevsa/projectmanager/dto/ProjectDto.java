@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-public class EditProjectDto implements Serializable {
+public class ProjectDto implements Serializable {
 
     private long id;
 
@@ -23,10 +23,10 @@ public class EditProjectDto implements Serializable {
 
     private List<Long> participantsId;
 
-    public EditProjectDto() {
+    public ProjectDto() {
     }
 
-    public EditProjectDto(long id, String name, String description, List<Long> participantsId) {
+    public ProjectDto(long id, String name, String description, List<Long> participantsId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -73,7 +73,7 @@ public class EditProjectDto implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        EditProjectDto that = (EditProjectDto) o;
+        ProjectDto that = (ProjectDto) o;
         return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(participantsId, that.participantsId);
     }
 
@@ -84,7 +84,7 @@ public class EditProjectDto implements Serializable {
 
     @Override
     public String toString() {
-        return "EditProjectDto{" +
+        return "ProjectDto{" +
             "id=" + id +
             ", name='" + name + '\'' +
             ", description='" + description + '\'' +

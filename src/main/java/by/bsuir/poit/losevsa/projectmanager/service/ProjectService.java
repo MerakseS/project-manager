@@ -13,6 +13,8 @@ public interface ProjectService {
 
     Project get(long id);
 
+    Project getByEmployeeLogin(long id, String employeeLogin);
+
     void update(long id, Project project);
 
     void delete(long id);

@@ -1,6 +1,7 @@
-package by.bsuir.poit.losevsa.projectmanager.service;
+package by.bsuir.poit.losevsa.projectmanager.service.impl;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import by.bsuir.poit.losevsa.projectmanager.entity.Role;
 import by.bsuir.poit.losevsa.projectmanager.exception.EmployeeAlreadyExistsException;
 import by.bsuir.poit.losevsa.projectmanager.repository.EmployeeRepository;
 import by.bsuir.poit.losevsa.projectmanager.repository.RoleRepository;
+import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
 
 @Service
 public class DefaultEmployeeService implements EmployeeService, UserDetailsService {
@@ -96,6 +98,26 @@ public class DefaultEmployeeService implements EmployeeService, UserDetailsServi
     public List<Employee> getAll() {
         LOG.info("Getting all employees");
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public List<Employee> getParticipantsList(String creatorLogin) {
+        List<Employee> employeeList = employeeRepository.findAll();
+        for (Iterator<Employee> iterator = employeeList.iterator(); iterator.hasNext(); ) {
+            Employee employee = iterator.next();
+            if (employee.getLogin().equals(creatorLogin)) {
+                iterator.remove();
+                continue;
+            }
+
+            for (Role role : employee.getRoles()) {
+                if (role.getName().equals("ADMIN")) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        return employeeList;
     }
 
     @Override

@@ -14,6 +14,8 @@ public interface EmployeeService {
 
     List<Employee> getAll();
 
+    List<Employee> getParticipantsList(String creatorLogin);
+
     void update(long id, Employee employee);
 
     void update(String login, Employee employee);

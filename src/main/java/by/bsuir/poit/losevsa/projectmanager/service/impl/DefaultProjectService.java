@@ -1,4 +1,4 @@
-package by.bsuir.poit.losevsa.projectmanager.service;
+package by.bsuir.poit.losevsa.projectmanager.service.impl;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,16 +12,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
+import by.bsuir.poit.losevsa.projectmanager.entity.Role;
+import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
 import by.bsuir.poit.losevsa.projectmanager.repository.ProjectRepository;
+import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
+import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
 
 @Service
 public class DefaultProjectService implements ProjectService {
 
     public static final Logger LOG = LoggerFactory.getLogger(DefaultProjectService.class);
 
+    private final EmployeeService employeeService;
+
     private final ProjectRepository projectRepository;
 
-    public DefaultProjectService(ProjectRepository projectRepository) {
+    public DefaultProjectService(EmployeeService employeeService, ProjectRepository projectRepository) {
+        this.employeeService = employeeService;
         this.projectRepository = projectRepository;
     }
 
@@ -48,6 +55,31 @@ public class DefaultProjectService implements ProjectService {
     public Project get(long id) {
         Project project = projectRepository.findById(id).orElseThrow();
         LOG.info(format("Successfully got project with id %d", id));
+        return project;
+    }
+
+    @Override
+    public Project getByEmployeeLogin(long id, String employeeLogin) {
+        Employee employee = employeeService.getByLogin(employeeLogin);
+        for (Role role : employee.getRoles()) {
+            if (role.getName().equals("ADMIN")) {
+                return projectRepository.findById(id).orElseThrow();
+            }
+        }
+
+        Project project = null;
+        for (Project employeeProject : employee.getProjects()) {
+            if (employeeProject.getId() == id) {
+                project = employeeProject;
+                break;
+            }
+        }
+
+        if (project == null) {
+            throw new NotAProjectParticipantException(format("Employee with login %s doesn't have project with id %d.",
+                employeeLogin, id));
+        }
+
         return project;
     }
 

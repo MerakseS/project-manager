@@ -73,7 +73,9 @@ public class DefaultTaskService implements TaskService {
 
     @Override
     public void delete(long id) {
-
+        Task task = taskRepository.getReferenceById(id);
+        taskRepository.delete(task);
+        LOG.info(format("Successfully deleted task with id %d", id));
     }
 
     private void validateValues(Task task) {

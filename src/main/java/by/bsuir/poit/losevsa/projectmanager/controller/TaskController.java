@@ -244,6 +244,29 @@ public class TaskController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public String deleteTask(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        Authentication authentication, Model model) {
+        try {
+            Task task = taskService.get(id);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Project project = projectService.getByEmployeeLogin(task.getTaskList().getProject().getId(),
+                userDetails.getUsername());
+
+            taskService.delete(id);
+
+            return format(PROJECT_REDIRECT, project.getId());
+        }
+        catch (NoSuchElementException e) {
+            return handleException("Can't delete task with id %d", id, e,
+                "Задачи с id %d не существует :(", NOT_FOUND_PAGE_PATH, model);
+        }
+        catch (NotAProjectParticipantException e) {
+            return handleException("Can't delete task with id %d", id, e,
+                "Вы не являетесь участником данного проекта :(", FORBIDDEN_PAGE_PATH, model);
+        }
+    }
+
     private String handleException(String logMessage, long id, Exception exception,
         String clientMessage, String pagePath, Model model) {
 

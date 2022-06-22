@@ -1,15 +1,16 @@
 package by.bsuir.poit.losevsa.projectmanager.controller;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import static java.lang.String.format;
 
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,10 +19,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import by.bsuir.poit.losevsa.projectmanager.dto.TaskDto;
+import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.Task;
+import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
+import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
+import by.bsuir.poit.losevsa.projectmanager.mapper.Mapper;
 import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
 import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
+import by.bsuir.poit.losevsa.projectmanager.service.TaskListService;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskService;
 
 @Controller
@@ -32,70 +40,112 @@ public class TaskController {
     public static final Logger LOG = LoggerFactory.getLogger(TaskController.class);
 
     private static final String ID_PATH_VARIABLE_NAME = "id";
+    private static final String TASK_ATTRIBUTE_NAME = "task";
+    private static final String TASK_LIST_ATTRIBUTE_NAME = "taskList";
+    private static final String PROJECT_ATTRIBUTE_NAME = "project";
+    private static final String PARTICIPANTS_ATTRIBUTE_NAME = "participants";
     private static final String ERROR_ATTRIBUTE_NAME = "errorMessage";
-    private static final String PROJECT_ATTRIBUTE_NAME = "task";
-    private static final String PROJECT_LIST_ATTRIBUTE_NAME = "taskList";
 
-    private static final String USER_PROJECT_LIST_PATH = "task/userTaskList";
-    private static final String ADMIN_PROJECT_LIST_PATH = "task/adminTaskList";
-    private static final String NEW_PROJECT_PAGE_PATH = "task/newTask";
-    private static final String PROJECT_PAGE_PATH = "task/task";
+    private static final String USER_TASK_LIST_PATH = "task/userTaskList";
+    private static final String ADMIN_TASK_LIST_PATH = "task/adminTaskList";
+    private static final String NEW_TASK_PAGE_PATH = "task/newTask";
+    private static final String TASK_PAGE_PATH = "task/task";
     private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
+    private static final String FORBIDDEN_PAGE_PATH = "pageForbidden";
 
-    private static final String PROJECT_REDIRECT = "redirect:/task";
+    private static final String PROJECT_REDIRECT = "redirect:/project/%d";
 
-    private final ModelMapper modelMapper;
     private final TaskService taskService;
-    private final EmployeeService employeeService;
     private final ProjectService projectService;
+    private final TaskListService taskListService;
 
-    public TaskController(ModelMapper modelMapper, TaskService taskService, EmployeeService employeeService, ProjectService projectService) {
-        this.modelMapper = modelMapper;
+    private final Mapper<Task, TaskDto> taskMapper;
+
+    public TaskController(TaskService taskService, ProjectService projectService, TaskListService taskListService, Mapper<Task, TaskDto> taskMapper) {
         this.taskService = taskService;
-        this.employeeService = employeeService;
         this.projectService = projectService;
+        this.taskListService = taskListService;
+        this.taskMapper = taskMapper;
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String showAdminTaskList(Model model) {
-        return ADMIN_PROJECT_LIST_PATH;
-    }
-
-    @GetMapping
-    public String showTaskList(Authentication authentication, Model model) {
-        return USER_PROJECT_LIST_PATH;
+        List<Task> taskList = taskService.getAll();
+        model.addAttribute(TASK_LIST_ATTRIBUTE_NAME, taskList);
+        return ADMIN_TASK_LIST_PATH;
     }
 
     @GetMapping("/new")
-    public String showNewTaskPage(@ModelAttribute("taskDto") Task task,
-        Model model) {
-
-        return NEW_PROJECT_PAGE_PATH;
+    public String showNewTaskPage(@RequestParam long projectId, @RequestParam long taskListId,
+        @ModelAttribute("taskDto") TaskDto taskDto, Authentication authentication, Model model) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            setNewTaskModelAttributes(projectId, taskListId, taskDto, userDetails.getUsername(), model);
+            return NEW_TASK_PAGE_PATH;
+        }
+        catch (NoSuchElementException e) {
+            return handleException("Can't show new task page", projectId, e,
+                "Проекта или списка задач не существует :(", NOT_FOUND_PAGE_PATH, model);
+        }
+        catch (NotAProjectParticipantException e) {
+            return handleException("Can't remove participant from project with id %d", projectId, e,
+                "Вы не являетесь участником данного проекта :(", FORBIDDEN_PAGE_PATH, model);
+        }
     }
 
     @PostMapping
-    public String createTask(Authentication authentication,
-        @ModelAttribute("taskDto") @Valid Task taskDto,
-        BindingResult bindingResult) {
+    public String createTask(Authentication authentication, @RequestParam long projectId,
+        @ModelAttribute("taskDto") @Valid TaskDto taskDto,
+        BindingResult bindingResult, Model model) {
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            if (bindingResult.hasErrors()) {
+                LOG.warn(format("Can't save task cause: %s", bindingResult));
+                setNewTaskModelAttributes(projectId, taskDto.getTaskListId(), taskDto, userDetails.getUsername(), model);
+                return NEW_TASK_PAGE_PATH;
+            }
 
-        return PROJECT_REDIRECT;
+            Task task = taskMapper.toEntity(taskDto);
+            taskService.create(task);
+
+            return format(PROJECT_REDIRECT, projectId);
+        }
+        catch (NoSuchElementException e) {
+            return handleException("Can't show new task page", projectId, e,
+                "Проекта или списка задач не существует :(", NOT_FOUND_PAGE_PATH, model);
+        }
+        catch (NotAProjectParticipantException e) {
+            return handleException("Can't remove participant from project with id %d", projectId, e,
+                "Вы не являетесь участником данного проекта :(", FORBIDDEN_PAGE_PATH, model);
+        }
     }
 
     @GetMapping("/{id}")
     public String showTask(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
         try {
 
-            return PROJECT_PAGE_PATH;
+            return TASK_PAGE_PATH;
         }
         catch (NoSuchElementException e) {
-            return handleNoSuchElementException("Can't show task with id %d", id, e, model);
+            return NOT_FOUND_PAGE_PATH;
         }
     }
 
-    private String handleNoSuchElementException(String logMessage, long id, NoSuchElementException exception, Model model) {
+    private void setNewTaskModelAttributes(long projectId, long taskListId, TaskDto taskDto, String login, Model model) {
+        Project project = projectService.getByEmployeeLogin(projectId, login);
+        model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
+        model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+
+        TaskList taskList = taskListService.get(taskListId);
+        taskDto.setTaskListId(taskList.getId());
+    }
+
+    private String handleException(String logMessage, long id, Exception exception,
+        String clientMessage, String pagePath, Model model) {
+
         LOG.warn(format(logMessage, id), exception);
-        model.addAttribute(ERROR_ATTRIBUTE_NAME, format("Проекта с id %d не существует :(", id));
-        return NOT_FOUND_PAGE_PATH;
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, clientMessage);
+        return pagePath;
     }
 }

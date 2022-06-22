@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Новая задача')">
+    <meta charset="UTF-8">
+    <title>Новая задача</title>
+</head>
+<body class="d-flex flex-column h-100 bg-light">
+
+<div th:replace="fragment/navbar::navbar"></div>
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <form th:object="${taskDto}" th:method="POST" th:action="@{/task}">
+            <div class="row justify-content-center">
+                <div class="row row-cols-1 w-50 g-3">
+                    <h1 class="col">Новая задача</h1>
+                    <div class="col has-validation">
+                        <label for="name" class="form-label">Название</label>
+                        <input id="name" type="text" th:field="*{name}"
+                               th:class="|form-control ${#fields.hasErrors('name') ? 'is-invalid' : ''}|">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            Valid first name is required.
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea id="description" th:field="*{description}" rows="3"
+                                  th:class="|form-control ${#fields.hasErrors('description') ? 'is-invalid' : ''}|"></textarea>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                            Valid surname is required.
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="projectId" th:value="${project.id}">
+                    <input type="hidden" name="taskListId" th:value="*{taskListId}">
+
+                    <div class="col">
+                        <div class="row row-cols-2">
+                            <div class="col">
+                                <label for="startDate" class="form-label">Дата начала</label>
+                                <input id="startDate" type="date" th:field="*{startDate}"
+                                       th:class="|form-control ${#fields.hasErrors('startDate') ? 'is-invalid' : ''}|">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">
+                                    Valid first name is required.
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label for="endDate" class="form-label">Дата окончания</label>
+                                <input id="endDate" type="date" th:field="*{endDate}"
+                                       th:class="|form-control ${#fields.hasErrors('endDate') ? 'is-invalid' : ''}|">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">
+                                    Valid first name is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <label for="employeeId" class="form-label">Исполнитель</label>
+                        <select id="employeeId" class="form-select" th:field="*{employeeId}">
+                            <option value=""></option>
+                            <option th:each="employee : ${participants}" th:value="${employee.id}"
+                                    th:text="|${employee.firstName} ${employee.surname}|">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-primary btn-lg" type="submit">Добавить задачу</button>
+                        <a class="btn btn-secondary btn-lg" th:href="@{/project/{id}(id=${project.id})}">Отмена</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

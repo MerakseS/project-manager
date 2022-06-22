@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 import by.bsuir.poit.losevsa.projectmanager.repository.TaskListRepository;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskListService;
@@ -33,13 +34,10 @@ public class DefaultTaskListService implements TaskListService {
     }
 
     @Override
-    public List<TaskList> getAllByProjectId(long projectId) {
-        return null;
-    }
-
-    @Override
     public TaskList get(long id) {
-        return null;
+        TaskList taskList = taskListRepository.findById(id).orElseThrow();
+        LOG.info(format("Successfully got task list with id %d", id));
+        return taskList;
     }
 
     @Override

@@ -168,6 +168,7 @@ public class ProjectController {
             }
 
             ProjectDto projectDto = projectMapper.toDto(project);
+            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
             model.addAttribute(PROJECT_DTO_ATTRIBUTE_NAME, projectDto);
 
             List<Employee> employeeList = employeeService.getParticipantsList(userDetails.getUsername());

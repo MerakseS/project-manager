@@ -8,8 +8,6 @@ public interface TaskListService {
 
     void create(TaskList taskList);
 
-    List<TaskList> getAllByProjectId(long projectId);
-
     TaskList get(long id);
 
     void update(long id, TaskList task);

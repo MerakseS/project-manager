@@ -14,6 +14,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "task")
@@ -24,9 +29,13 @@ public class Task {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 50)
+    @NotBlank(message = "Название должно быть заполнено")
+    @Length(message = "Длина от 2 до 255 символов", min = 2, max = 255)
+    @NotNull(message = "Название должно быть заполнено")
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Length(message = "Длина не больше 255 символов.", max = 255)
     @Column(name = "description")
     private String description;
 
@@ -37,13 +46,15 @@ public class Task {
     @ManyToMany
     @JoinTable(name = "task_task_status",
         joinColumns = @JoinColumn(name = "task_id"),
-        inverseJoinColumns = @JoinColumn(name = "task_statuse_id"))
+        inverseJoinColumns = @JoinColumn(name = "task_status_id"))
     private Set<TaskStatus> taskStatuses = new LinkedHashSet<>();
 
     @Column(name = "start_date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
     @Column(name = "end_date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
     @ManyToOne

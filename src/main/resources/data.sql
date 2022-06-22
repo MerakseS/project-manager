@@ -30,8 +30,18 @@ VALUES ('Менеджер проектов',
 INSERT INTO project_participants (project_id, participant_id)
 VALUES (1, 2),
        (1, 3),
+       (1, 4),
        (2, 2),
        (4, 2),
        (4, 3),
        (5, 1);
 
+INSERT INTO task_list (name, project_id)
+VALUES ('To Do', 1),
+       ('Doing', 1),
+       ('Done', 1);
+
+INSERT INTO task (description, end_date, name, start_date, employee_id, task_list_id)
+VALUES (null, '2022-06-22', 'Task', '2022-06-15', 2, 1),
+       (null, '2022-06-22', 'Написать диплом', '2022-06-15', 3, 2),
+       (null, '2022-06-22', 'PM-30 | Добавить статусы задач', '2022-06-15', 2, 1);

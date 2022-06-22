@@ -34,7 +34,7 @@
 
                     <div class="col">
                         <label for="participantsId" class="form-label">Участники</label>
-                        <select type="date" id="participantsId" class="form-select" th:field="*{participantsId}" multiple>
+                        <select id="participantsId" class="form-select" th:field="*{participantsId}" multiple>
                             <option th:each="employee : ${employeeList}" th:value="${employee.id}"
                                     th:text="|${employee.firstName} ${employee.surname}|">
                             </option>

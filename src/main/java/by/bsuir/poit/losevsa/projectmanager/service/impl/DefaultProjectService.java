@@ -2,6 +2,7 @@ package by.bsuir.poit.losevsa.projectmanager.service.impl;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import static java.lang.String.format;
 
@@ -67,20 +68,16 @@ public class DefaultProjectService implements ProjectService {
             }
         }
 
-        Project project = null;
+        Project project = projectRepository.findById(id).orElseThrow();
         for (Project employeeProject : employee.getProjects()) {
-            if (employeeProject.getId() == id) {
-                project = employeeProject;
-                break;
+            if (Objects.equals(employeeProject.getId(), project.getId())) {
+                return project;
             }
         }
 
-        if (project == null) {
-            throw new NotAProjectParticipantException(format("Employee with login %s doesn't have project with id %d.",
-                employeeLogin, id));
-        }
+        throw new NotAProjectParticipantException(format("Employee with login %s doesn't have project with id %d.",
+            employeeLogin, id));
 
-        return project;
     }
 
     @Override

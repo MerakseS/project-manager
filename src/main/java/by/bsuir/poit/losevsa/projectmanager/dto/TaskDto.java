@@ -32,6 +32,9 @@ public class TaskDto implements Serializable {
 
     private Long employeeId;
 
+    public TaskDto() {
+    }
+
     public TaskDto(Long id, String name, String description, Long taskListId, LocalDate startDate, LocalDate endDate, Long employeeId) {
         this.id = id;
         this.name = name;

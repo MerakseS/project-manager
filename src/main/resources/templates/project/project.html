@@ -36,24 +36,27 @@
                     </div>
                 </div>
 
-                <div th:each="task : *{tasks}" th:object="${task}" class="bg-light border rounded mb-2 p-1 position-relative">
-                    <span th:text="*{name}"></span>
-                    <div class="d-flex justify-content-end">
-                        <small class="text-muted" th:if="*{employee != null}"
-                               th:classappend="*{#strings.equals(employee.login, #authentication.name)}? 'fw-bold'"
-                               th:text="|@*{employee.login}|"></small>
+                <div class="d-flex flex-column flex-nowrap">
+                    <div th:each="task : *{tasks}" th:object="${task}"
+                         class="bg-light border rounded mb-2 p-1 position-relative">
+                        <span th:text="*{name}"></span>
+                        <div class="d-flex justify-content-end">
+                            <small class="text-muted" th:if="*{employee != null}"
+                                   th:classappend="*{#strings.equals(employee.login, #authentication.name)}? 'fw-bold'"
+                                   th:text="|@*{employee.login}|"></small>
+                        </div>
+                        <a class="stretched-link" th:href="@{/task/{id}(id=*{id})}"></a>
                     </div>
-                    <a class="stretched-link" th:href="@{/task/{id}(id=*{id})}"></a>
-                </div>
 
-                <div class="d-grid gap-2">
-                    <a class="btn btn-sm btn-outline-secondary"
-                       th:href="@{/task/new(projectId=${project.id},taskListId=${taskList.id})}">
-                        <i class="bi bi-plus"></i>Добавить задачу
-                    </a>
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-sm btn-outline-secondary"
+                           th:href="@{/task/new(projectId=${project.id},taskListId=${taskList.id})}">
+                            <i class="bi bi-plus"></i>Добавить задачу
+                        </a>
+                    </div>
                 </div>
-
             </div>
+
             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#newTaskListModal"
                     style="min-width : 250px; width : 250px; max-width: 250px">
                 <i class="bi bi-plus"></i>Добавить список задач

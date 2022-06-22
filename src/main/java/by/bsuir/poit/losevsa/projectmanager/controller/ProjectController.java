@@ -92,6 +92,7 @@ public class ProjectController {
     public String showNewProjectPage(Authentication authentication,
         @ModelAttribute(PROJECT_DTO_ATTRIBUTE_NAME) ProjectDto project,
         Model model) {
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<Employee> employeeList = employeeService.getParticipantsList(userDetails.getUsername());
         model.addAttribute(EMPLOYEE_LIST_ATTRIBUTE_NAME, employeeList);
@@ -157,7 +158,8 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditProjectPage(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
+    public String showEditProjectPage(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
+        Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Employee employee = employeeService.getByLogin(userDetails.getUsername());
@@ -207,12 +209,12 @@ public class ProjectController {
             return format(PROJECT_DETAILS_REDIRECT, id);
         }
         catch (NoSuchElementException e) {
-            return handleException("Can't show edit page of project with id %d", id, e,
+            return handleException("Can't update project with id %d", id, e,
                 "Проекта с id %d не существует :(", NOT_FOUND_PAGE_PATH, model);
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public String deleteProject(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
         Authentication authentication, Model model) {
         try {

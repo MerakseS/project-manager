@@ -35,6 +35,13 @@ public class TaskMapper implements Mapper<Task, TaskDto> {
 
     @Override
     public TaskDto toDto(Task task) {
-        return null;
+        TaskDto taskDto = modelMapper.map(task, TaskDto.class);
+        taskDto.setTaskListId(task.getTaskList().getId());
+
+        if (task.getEmployee() != null) {
+            taskDto.setEmployeeId(task.getEmployee().getId());
+        }
+
+        return taskDto;
     }
 }

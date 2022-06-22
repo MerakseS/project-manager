@@ -14,14 +14,18 @@
             <div th:object="${employee}">
                 <h2 th:text="|*{surname} *{firstName} *{patronymic ?: ''}|">Имя Фамилия Отчество</h2>
                 <h6 class="text-muted" th:text="|@*{login}|"></h6>
-                <p th:text="|Должность: *{position}|"></p>
+
+                <h4>Должность</h4>
+                <p th:text="|*{position}|"></p>
+
                 <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                    <h4>Роли</h4>
                     <p>
                         <th:block th:each="role : *{roles}" th:text="|${role.name} |">role</th:block>
                     </p>
                 </div>
 
-                <div th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                <div th:if="*{!#authorization.expression('hasRole(''ROLE_ADMIN'')') && #strings.equals(login, #authentication.name)}">
                     <form class="form" th:method="POST" th:action="@{/logout}">
                         <a class="btn btn-primary" href="editEmployee.html" th:href="@{/profile/edit}">
                             Изменить

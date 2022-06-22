@@ -112,11 +112,11 @@ public class TaskController {
             return format(PROJECT_REDIRECT, projectId);
         }
         catch (NoSuchElementException e) {
-            return handleException("Can't show new task page", projectId, e,
-                "Проекта или списка задач не существует :(", NOT_FOUND_PAGE_PATH, model);
+            return handleException("Can't create new task in project with id %d", projectId, e,
+                "Проекта или списка задач с  не существует :(", NOT_FOUND_PAGE_PATH, model);
         }
         catch (NotAProjectParticipantException e) {
-            return handleException("Can't remove participant from project with id %d", projectId, e,
+            return handleException("Can't create new task in project with id %d", projectId, e,
                 "Вы не являетесь участником данного проекта :(", FORBIDDEN_PAGE_PATH, model);
         }
     }
@@ -124,11 +124,19 @@ public class TaskController {
     @GetMapping("/{id}")
     public String showTask(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Authentication authentication, Model model) {
         try {
-
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Task task = taskService.get(id);
+            projectService.getByEmployeeLogin(task.getTaskList().getProject().getId(), userDetails.getUsername());
+            model.addAttribute(TASK_ATTRIBUTE_NAME, task);
             return TASK_PAGE_PATH;
         }
         catch (NoSuchElementException e) {
-            return NOT_FOUND_PAGE_PATH;
+            return handleException("Can't show task with id %d", id, e,
+                "Задачи с id %d не существует :(", NOT_FOUND_PAGE_PATH, model);
+        }
+        catch (NotAProjectParticipantException e) {
+            return handleException("Can't show task with id %d", id, e,
+                "Вы не являетесь участником данного проекта :(", FORBIDDEN_PAGE_PATH, model);
         }
     }
 
@@ -145,7 +153,7 @@ public class TaskController {
         String clientMessage, String pagePath, Model model) {
 
         LOG.warn(format(logMessage, id), exception);
-        model.addAttribute(ERROR_ATTRIBUTE_NAME, clientMessage);
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, format(clientMessage, id));
         return pagePath;
     }
 }

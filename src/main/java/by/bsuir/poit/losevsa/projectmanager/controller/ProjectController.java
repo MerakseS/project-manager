@@ -271,7 +271,7 @@ public class ProjectController {
         String clientMessage, String pagePath, Model model) {
 
         LOG.warn(format(logMessage, id), exception);
-        model.addAttribute(ERROR_ATTRIBUTE_NAME, clientMessage);
+        model.addAttribute(ERROR_ATTRIBUTE_NAME, format(clientMessage, id));
         return pagePath;
     }
 }

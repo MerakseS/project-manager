@@ -15,7 +15,7 @@ public class TaskDto implements Serializable {
     private Long id;
 
     @NotBlank(message = "Название должно быть заполнено")
-    @Length(message = "Длина от 2 до 30 символов", min = 2, max = 30)
+    @Length(message = "Длина от 2 до 255 символов", min = 2, max = 255)
     @NotNull(message = "Название должно быть заполнено")
     private String name;
 

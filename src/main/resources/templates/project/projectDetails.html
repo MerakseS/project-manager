@@ -18,13 +18,13 @@
                 <h4>Создатель проекта</h4>
                 <p th:object="${project.creator}">
                     <span th:text="|*{firstName} *{surname}|"></span>
-                    <span class="text-muted" th:text="|(@*{login})|"></span>
+                    <a class="text-muted text-decoration-none" th:href="@{/employee/{id}(id=*{id})}" th:text="|(@*{login})|"></a>
                 </p>
 
                 <h4>Участники проекта</h4>
                 <p class="mb-1" th:each="participant : *{participants}" th:object="${participant}">
                     <span th:text="|*{firstName} *{surname}|"></span>
-                    <span class="text-muted" th:text="|(@*{login})|"></span>
+                    <a class="text-muted text-decoration-none" th:href="@{/employee/{id}(id=*{id})}" th:text="|(@*{login})|"></a>
                 </p>
 
                 <div class="mt-3" th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')') || #strings.equals(project.creator.login, #authentication.name)}">

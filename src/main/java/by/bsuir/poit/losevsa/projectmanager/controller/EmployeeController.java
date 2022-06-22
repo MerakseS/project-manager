@@ -26,7 +26,6 @@ import by.bsuir.poit.losevsa.projectmanager.service.EmployeeService;
 
 @Controller
 @RequestMapping(("/employee"))
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class EmployeeController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EmployeeController.class);
@@ -53,6 +52,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String showEmployeeListPage(Model model) {
         List<Employee> employeeList = employeeService.getAll();
         model.addAttribute(EMPLOYEE_LIST_ATTRIBUTE_NAME, employeeList);
@@ -72,6 +72,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}/edit")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String showEditProfilePage(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Model model) {
         try {
             Employee employee = employeeService.get(id);
@@ -84,6 +85,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String updateEmployee(@PathVariable(ID_PATH_VARIABLE_NAME) long id,
         @ModelAttribute(EMPLOYEE_ATTRIBUTE_NAME) @Valid EmployeeEditDto employeeDto,
         BindingResult bindingResult,
@@ -105,6 +107,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String deleteEmployee(@PathVariable(ID_PATH_VARIABLE_NAME) long id, Model model) {
         try {
             employeeService.delete(id);

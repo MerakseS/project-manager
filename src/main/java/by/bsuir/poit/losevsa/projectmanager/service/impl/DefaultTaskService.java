@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import by.bsuir.poit.losevsa.projectmanager.entity.Task;
+import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 import by.bsuir.poit.losevsa.projectmanager.exception.StartDateLaterThanEndDateException;
 import by.bsuir.poit.losevsa.projectmanager.repository.TaskRepository;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskService;
@@ -47,7 +48,9 @@ public class DefaultTaskService implements TaskService {
 
     @Override
     public Task get(long id) {
-        return null;
+        Task task = taskRepository.findById(id).orElseThrow();
+        LOG.info(format("Successfully got task with id %d", id));
+        return task;
     }
 
     @Override

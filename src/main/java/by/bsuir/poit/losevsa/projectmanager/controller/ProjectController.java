@@ -1,5 +1,6 @@
 package by.bsuir.poit.losevsa.projectmanager.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -27,6 +28,8 @@ import by.bsuir.poit.losevsa.projectmanager.dto.ProjectDto;
 import by.bsuir.poit.losevsa.projectmanager.dto.TaskListDto;
 import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
+import by.bsuir.poit.losevsa.projectmanager.entity.Task;
+import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectCreatorException;
 import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
 import by.bsuir.poit.losevsa.projectmanager.mapper.Mapper;
@@ -126,6 +129,9 @@ public class ProjectController {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             Project project = projectService.getByEmployeeLogin(id, userDetails.getUsername());
+            for (TaskList taskList : project.getTaskLists()) {
+                taskList.getTasks().sort(Comparator.comparing(Task::getPosition));
+            }
             model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
             return PROJECT_PAGE_PATH;
         }

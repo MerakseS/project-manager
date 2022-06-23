@@ -43,6 +43,9 @@ public class Task {
     @JoinColumn(name = "task_list_id", nullable = false)
     private TaskList taskList;
 
+    @Column(name = "position", nullable = false)
+    private int position;
+
     @ManyToMany
     @JoinTable(name = "task_task_status",
         joinColumns = @JoinColumn(name = "task_id"),
@@ -61,52 +64,12 @@ public class Task {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    public Employee getEmployee() {
-        return employee;
+    public Long getId() {
+        return id;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public Set<TaskStatus> getTaskStatuses() {
-        return taskStatuses;
-    }
-
-    public void setTaskStatuses(Set<TaskStatus> taskStatuses) {
-        this.taskStatuses = taskStatuses;
-    }
-
-    public TaskList getTaskList() {
-        return taskList;
-    }
-
-    public void setTaskList(TaskList taskList) {
-        this.taskList = taskList;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -117,12 +80,59 @@ public class Task {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
+    public String getDescription() {
+        return description;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
+    public TaskList getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(TaskList taskList) {
+        this.taskList = taskList;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public Set<TaskStatus> getTaskStatuses() {
+        return taskStatuses;
+    }
+
+    public void setTaskStatuses(Set<TaskStatus> taskStatuses) {
+        this.taskStatuses = taskStatuses;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 }

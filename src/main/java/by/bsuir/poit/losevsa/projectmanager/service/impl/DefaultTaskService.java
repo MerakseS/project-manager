@@ -1,5 +1,6 @@
 package by.bsuir.poit.losevsa.projectmanager.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,6 +34,8 @@ public class DefaultTaskService implements TaskService {
             task.setDescription(null);
         }
 
+        addToTaskList(task);
+
         task = taskRepository.save(task);
         LOG.info(format("Successfully created task with id %d", task.getId()));
     }
@@ -63,9 +66,15 @@ public class DefaultTaskService implements TaskService {
         oldTask.setName(newTask.getName());
         oldTask.setDescription(newTask.getDescription() != null && newTask.getDescription().isBlank() ?
             null : newTask.getDescription());
+
         oldTask.setStartDate(newTask.getStartDate());
         oldTask.setEndDate(newTask.getEndDate());
+
+        removeFromTaskList(oldTask);
         oldTask.setTaskList(newTask.getTaskList());
+        oldTask.setPosition(newTask.getPosition());
+        addToTaskList(oldTask);
+
         oldTask.setEmployee(newTask.getEmployee());
         oldTask.setTaskStatuses(newTask.getTaskStatuses());
 
@@ -75,9 +84,45 @@ public class DefaultTaskService implements TaskService {
 
     @Override
     public void delete(long id) {
-        Task task = taskRepository.getReferenceById(id);
+        Task task = taskRepository.findById(id).orElseThrow();
+        removeFromTaskList(task);
         taskRepository.delete(task);
         LOG.info(format("Successfully deleted task with id %d", id));
+    }
+
+    private void removeFromTaskList(Task removedTask) {
+        List<Task> tasks = taskRepository.findByTaskListOrderByPosition(removedTask.getTaskList());
+        for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext(); ) {
+            Task task = iterator.next();
+            if (task.getPosition() == removedTask.getPosition()) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        int position = 1;
+        for (Task task : tasks) {
+            task.setPosition(position++);
+        }
+
+        taskRepository.saveAll(tasks);
+    }
+
+    private void addToTaskList(Task addedTask) {
+        List<Task> tasks = taskRepository.findByTaskListOrderByPosition(addedTask.getTaskList());
+        for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext(); ) {
+            Task task = iterator.next();
+            if (task.getId().equals(addedTask.getId())) {
+                iterator.remove();
+                break;
+            }
+        }
+
+        for (int i = addedTask.getPosition() - 1; i < tasks.size(); i++) {
+            Task task = tasks.get(i);
+            task.setPosition(i + 2);
+        }
+        taskRepository.saveAll(tasks);
     }
 
     private void validateValues(Task task) {

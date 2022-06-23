@@ -25,6 +25,8 @@ public class TaskDto implements Serializable {
 
     private Long taskListId;
 
+    private Integer position;
+
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
 
@@ -38,11 +40,12 @@ public class TaskDto implements Serializable {
     public TaskDto() {
     }
 
-    public TaskDto(Long id, String name, String description, Long taskListId, LocalDate startDate, LocalDate endDate, Long employeeId, List<Long> taskStatusesId) {
+    public TaskDto(Long id, String name, String description, Long taskListId, Integer position, LocalDate startDate, LocalDate endDate, Long employeeId, List<Long> taskStatusesId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.taskListId = taskListId;
+        this.position = position;
         this.startDate = startDate;
         this.endDate = endDate;
         this.employeeId = employeeId;
@@ -146,5 +149,13 @@ public class TaskDto implements Serializable {
             "startDate = " + startDate + ", " +
             "endDate = " + endDate + ", " +
             "employeeId = " + employeeId + ")";
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

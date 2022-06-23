@@ -33,7 +33,6 @@
                     </div>
 
                     <input type="hidden" name="projectId" th:value="${project.id}">
-                    <input type="hidden" name="taskListId" th:value="*{taskListId}">
 
                     <div class="col">
                         <div class="row row-cols-2">
@@ -76,6 +75,27 @@
                     </div>
 
                     <div class="col">
+                        <div class="row row-cols-2">
+                            <div class="col">
+                                <label for="taskListId" class="form-label">Список</label>
+                                <select id="taskListId" class="form-select" th:field="*{taskListId}">
+                                    <option th:each="taskList : ${project.taskLists}" th:value="${taskList.id}"
+                                            th:text="${taskList.name}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="position" class="form-label">Позиция</label>
+                                <select id="position" class="form-select" th:field="*{position}">
+                                    <option th:each="task : ${taskList.tasks}" th:value="${taskStat.index + 1}"
+                                            th:text="${taskStat.index + 1}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
                         <button class="btn btn-primary btn-lg" type="submit">Изменить задачу</button>
                         <a class="btn btn-secondary btn-lg" th:href="@{/task/{id}(id=${id})}">Отмена</a>
                     </div>
@@ -84,6 +104,29 @@
         </form>
     </div>
 </main>
+
+<select th:each="taskList : ${project.taskLists}" th:object="${taskList}" th:id="*{name}" class="form-select visually-hidden">
+    <option th:each="task : ${taskList.tasks}" th:value="${taskStat.index + 1}"
+            th:text="${taskStat.index + 1}">
+    </option>
+    <option th:if="${taskList.id != taskDto.taskListId}" th:value="${#lists.size(taskList.tasks) + 1}"
+            th:text="${#lists.size(taskList.tasks) + 1}"></option>
+</select>
+
+<script>
+    const taskListSelect = document.getElementById('taskListId');
+    taskListSelect.addEventListener('change', function (event) {
+        const name = taskListSelect.options[taskListSelect.selectedIndex].text;
+        const newPositionSelect = document.getElementById(name);
+        const positionSelect = document.getElementById('position');
+        positionSelect.options.length = 0;
+
+        for (let i = 0; i < newPositionSelect.options.length; i++) {
+            const option = newPositionSelect.options[i];
+            positionSelect.appendChild(new Option(option.text, option.value));
+        }
+    });
+</script>
 
 <div th:replace="fragment/footer::footer"></div>
 

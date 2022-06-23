@@ -88,9 +88,9 @@ public class TaskController {
         @ModelAttribute("taskDto") TaskDto taskDto, Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            setTaskFormAttributes(projectId, userDetails.getUsername(), model);
-
             TaskList taskList = taskListService.get(taskListId);
+            setTaskFormAttributes(taskList, userDetails.getUsername(), model);
+
             taskDto.setTaskListId(taskList.getId());
 
             return NEW_TASK_PAGE_PATH;
@@ -106,14 +106,15 @@ public class TaskController {
     }
 
     @PostMapping
-    public String createTask(Authentication authentication, @RequestParam long projectId,
+    public String createTask(@RequestParam long projectId, @RequestParam long taskListId,
         @ModelAttribute(TASK_DTO_ATTRIBUTE_NAME) @Valid TaskDto taskDto,
-        BindingResult bindingResult, Model model) {
+        BindingResult bindingResult, Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't save task cause: %s", bindingResult));
-                setTaskFormAttributes(projectId, userDetails.getUsername(), model);
+                TaskList taskList = taskListService.get(taskListId);
+                setTaskFormAttributes(taskList, userDetails.getUsername(), model);
                 return NEW_TASK_PAGE_PATH;
             }
 
@@ -132,7 +133,7 @@ public class TaskController {
         }
         catch (StartDateLaterThanEndDateException e) {
             LOG.warn("Can't create new task", e);
-            return handleStartDateLaterThanEndDateException(authentication, projectId, bindingResult, model, NEW_TASK_PAGE_PATH);
+            return handleStartDateLaterThanEndDateException(authentication, taskListId, bindingResult, model, NEW_TASK_PAGE_PATH);
         }
     }
 
@@ -165,7 +166,7 @@ public class TaskController {
         try {
             Task task = taskService.get(id);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            setTaskFormAttributes(task.getTaskList().getProject().getId(), userDetails.getUsername(), model);
+            setTaskFormAttributes(task.getTaskList(), userDetails.getUsername(), model);
 
             TaskDto taskDto = taskMapper.toDto(task);
             model.addAttribute(TASK_DTO_ATTRIBUTE_NAME, taskDto);
@@ -185,13 +186,14 @@ public class TaskController {
     @PutMapping("/{id}")
     public String updateTask(Authentication authentication,
         @PathVariable(ID_PATH_VARIABLE_NAME) long id, @RequestParam long projectId,
-        @ModelAttribute(TASK_DTO_ATTRIBUTE_NAME) @Valid TaskDto taskDto,
+        @RequestParam long taskListId, @ModelAttribute(TASK_DTO_ATTRIBUTE_NAME) @Valid TaskDto taskDto,
         BindingResult bindingResult, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't update task cause: %s", bindingResult));
-                setTaskFormAttributes(projectId, userDetails.getUsername(), model);
+                TaskList taskList = taskListService.get(taskDto.getTaskListId());
+                setTaskFormAttributes(taskList, userDetails.getUsername(), model);
                 return EDIT_TASK_PAGE_PATH;
             }
 
@@ -210,7 +212,7 @@ public class TaskController {
         }
         catch (StartDateLaterThanEndDateException e) {
             LOG.warn(format("Can't update task with id %d", id), e);
-            return handleStartDateLaterThanEndDateException(authentication, projectId, bindingResult, model, EDIT_TASK_PAGE_PATH);
+            return handleStartDateLaterThanEndDateException(authentication, taskListId, bindingResult, model, EDIT_TASK_PAGE_PATH);
         }
     }
 
@@ -237,11 +239,12 @@ public class TaskController {
         }
     }
 
-    private void setTaskFormAttributes(long projectId, String username, Model model) {
-        Project project = projectService.getByEmployeeLogin(projectId, username);
+    private void setTaskFormAttributes(TaskList taskList, String username, Model model) {
+        Project project = projectService.getByEmployeeLogin(taskList.getProject().getId(), username);
         model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
         model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
         model.addAttribute(TASK_STATUSES_ATTRIBUTE_NAME, project.getTaskStatuses());
+        model.addAttribute(TASK_LIST_ATTRIBUTE_NAME, taskList);
     }
 
     private String handleException(String logMessage, long id, Exception exception,
@@ -253,13 +256,14 @@ public class TaskController {
     }
 
     private String handleStartDateLaterThanEndDateException(Authentication authentication,
-        long projectId, BindingResult bindingResult, Model model, String newTaskPagePath) {
+        long taskListId, BindingResult bindingResult, Model model, String newTaskPagePath) {
         ObjectError error = new FieldError(TASK_DTO_ATTRIBUTE_NAME, "startDate",
             "Дата начала позже даты окончания.");
         bindingResult.addError(error);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        setTaskFormAttributes(projectId, userDetails.getUsername(), model);
+        TaskList taskList = taskListService.get(taskListId);
+        setTaskFormAttributes(taskList, userDetails.getUsername(), model);
 
         return newTaskPagePath;
     }

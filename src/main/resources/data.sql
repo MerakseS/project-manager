@@ -41,10 +41,10 @@ VALUES ('To Do', 1),
        ('Doing', 1),
        ('Done', 1);
 
-INSERT INTO task (description, end_date, name, start_date, employee_id, task_list_id)
-VALUES (null, '2022-06-22', 'Task', '2022-06-15', 2, 1),
-       (null, '2022-06-22', 'Написать диплом', '2022-06-15', 3, 2),
-       (null, '2022-06-22', 'PM-30 | Добавить статусы задач', '2022-06-15', 2, 1);
+INSERT INTO task (description, end_date, name, start_date, employee_id, task_list_id, position)
+VALUES (null, '2022-06-22', 'Task', '2022-06-15', 2, 1, 1),
+       (null, '2022-06-22', 'Написать диплом', '2022-06-15', 3, 1, 2),
+       (null, '2022-06-22', 'PM-30 | Добавить статусы задач', '2022-06-15', 2, 2, 1);
 
 INSERT INTO task_status (color, name, project_id)
 VALUES ('danger', 'TO DO', 1),

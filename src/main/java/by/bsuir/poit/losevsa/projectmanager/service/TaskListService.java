@@ -1,7 +1,5 @@
 package by.bsuir.poit.losevsa.projectmanager.service;
 
-import java.util.List;
-
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 
 public interface TaskListService {
@@ -10,7 +8,7 @@ public interface TaskListService {
 
     TaskList get(long id);
 
-    void update(long id, TaskList task);
+    void update(long id, TaskList taskList);
 
     void delete(long id);
 }

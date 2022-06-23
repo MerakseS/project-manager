@@ -10,8 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "task_status")
@@ -22,9 +25,14 @@ public class TaskStatus {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotBlank(message = "Название должно быть заполнено.")
+    @Length(message = "Длина от 2 до 30 символов.", min = 2, max = 30)
+    @NotNull(message = "Название должно быть заполнено.")
     @Column(name = "name", nullable = false, length = 30)
     private String name;
 
+    @NotBlank(message = "Выберите цвет.")
+    @NotNull(message = "Выберите цвет.")
     @Column(name = "color", nullable = false, length = 30)
     private String color;
 

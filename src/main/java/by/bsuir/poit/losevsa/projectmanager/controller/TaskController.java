@@ -2,7 +2,6 @@ package by.bsuir.poit.losevsa.projectmanager.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import static java.lang.String.format;
 
 import javax.validation.Valid;
@@ -27,11 +26,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import by.bsuir.poit.losevsa.projectmanager.dto.TaskDto;
-import by.bsuir.poit.losevsa.projectmanager.entity.Employee;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
 import by.bsuir.poit.losevsa.projectmanager.entity.Task;
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
-import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectCreatorException;
 import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
 import by.bsuir.poit.losevsa.projectmanager.exception.StartDateLaterThanEndDateException;
 import by.bsuir.poit.losevsa.projectmanager.mapper.Mapper;
@@ -138,16 +135,7 @@ public class TaskController {
         }
         catch (StartDateLaterThanEndDateException e) {
             LOG.warn("Can't create new task", e);
-            ObjectError error = new FieldError(TASK_DTO_ATTRIBUTE_NAME, "startDate",
-                "Дата начала позже даты окончания.");
-            bindingResult.addError(error);
-
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-            model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
-
-            return NEW_TASK_PAGE_PATH;
+            return handleStartDateLaterThanEndDateException(authentication, projectId, bindingResult, model, NEW_TASK_PAGE_PATH);
         }
     }
 
@@ -231,16 +219,7 @@ public class TaskController {
         }
         catch (StartDateLaterThanEndDateException e) {
             LOG.warn(format("Can't update task with id %d", id), e);
-            ObjectError error = new FieldError(TASK_DTO_ATTRIBUTE_NAME, "startDate",
-                "Дата начала позже даты окончания.");
-            bindingResult.addError(error);
-
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-            model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
-
-            return EDIT_TASK_PAGE_PATH;
+            return handleStartDateLaterThanEndDateException(authentication, projectId, bindingResult, model, EDIT_TASK_PAGE_PATH);
         }
     }
 
@@ -273,5 +252,19 @@ public class TaskController {
         LOG.warn(format(logMessage, id), exception);
         model.addAttribute(ERROR_ATTRIBUTE_NAME, format(clientMessage, id));
         return pagePath;
+    }
+
+    private String handleStartDateLaterThanEndDateException(Authentication authentication,
+        long projectId, BindingResult bindingResult, Model model, String newTaskPagePath) {
+        ObjectError error = new FieldError(TASK_DTO_ATTRIBUTE_NAME, "startDate",
+            "Дата начала позже даты окончания.");
+        bindingResult.addError(error);
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
+        model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
+        model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+
+        return newTaskPagePath;
     }
 }

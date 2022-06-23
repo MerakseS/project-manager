@@ -28,6 +28,9 @@
                 </p>
 
                 <div class="mt-3" th:unless="${#authorization.expression('hasRole(''ROLE_ADMIN'')') || #strings.equals(project.creator.login, #authentication.name)}">
+                    <a class="btn btn-info text-white" th:href="@{/project/{id}/taskStatus(id=*{id})}">
+                        Статусы проекта
+                    </a>
                     <form class="form" th:method="DELETE" th:action="@{/project/{id}/exit(id=*{id})}">
                         <input type="submit" class="btn btn-danger" value="Выйти из проекта"/>
                     </form>
@@ -35,6 +38,9 @@
 
                 <div class="mt-3" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')') || #strings.equals(project.creator.login, #authentication.name)}">
                     <form class="form" th:action="@{/project/{id}(id=*{id})}" th:method="DELETE">
+                        <a class="btn btn-success" th:href="@{/project/{id}/taskStatus(id=*{id})}">
+                            Статусы проекта
+                        </a>
                         <a class="btn btn-primary" href="editProject.html" th:href="@{/project/{id}/edit(id=*{id})}">
                             Изменить проект
                         </a>

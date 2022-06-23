@@ -45,3 +45,8 @@ INSERT INTO task (description, end_date, name, start_date, employee_id, task_lis
 VALUES (null, '2022-06-22', 'Task', '2022-06-15', 2, 1),
        (null, '2022-06-22', 'Написать диплом', '2022-06-15', 3, 2),
        (null, '2022-06-22', 'PM-30 | Добавить статусы задач', '2022-06-15', 2, 1);
+
+INSERT INTO task_status (color, name, project_id)
+VALUES ('danger', 'TO DO', 1),
+       ('warning', 'DOING', 1),
+       ('success', 'DONE', 1);

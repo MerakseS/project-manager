@@ -12,7 +12,12 @@
     <div class="container">
         <main class="px-3">
             <div th:object="${project}">
-                <h2 th:text="*{name}">Имя проекта</h2>
+                <h2>
+                    <a class="text-black" th:href="@{/project/{id}(id=*{id})}">
+                        <i class="bi bi-arrow-bar-left"></i>
+                    </a>
+                    <span th:text="*{name}">Имя проекта</span>
+                </h2>
                 <p class="text-muted" th:text="*{description}"></p>
 
                 <h4>Создатель проекта</h4>

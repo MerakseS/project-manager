@@ -19,14 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import by.bsuir.poit.losevsa.projectmanager.dto.TaskDto;
 import by.bsuir.poit.losevsa.projectmanager.entity.Project;
-import by.bsuir.poit.losevsa.projectmanager.entity.Task;
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskStatus;
 import by.bsuir.poit.losevsa.projectmanager.exception.NotAProjectParticipantException;
-import by.bsuir.poit.losevsa.projectmanager.mapper.Mapper;
 import by.bsuir.poit.losevsa.projectmanager.service.ProjectService;
-import by.bsuir.poit.losevsa.projectmanager.service.TaskService;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskStatusService;
 
 @Controller
@@ -35,38 +31,23 @@ public class TaskStatusController {
 
     public static final Logger LOG = LoggerFactory.getLogger(TaskStatusController.class);
 
-    private static final String ID_PATH_VARIABLE_NAME = "id";
     private static final String TASK_STATUS_ATTRIBUTE_NAME = "taskStatus";
-    private static final String TASK_STATUS_DTO_ATTRIBUTE_NAME = "taskStatusDto";
     private static final String TASK_STATUS_LIST_ATTRIBUTE_NAME = "taskStatusList";
     private static final String PROJECT_ATTRIBUTE_NAME = "project";
-    private static final String PARTICIPANTS_ATTRIBUTE_NAME = "participants";
     private static final String ERROR_ATTRIBUTE_NAME = "errorMessage";
 
-    private static final String ADMIN_TASK_STATUS_LIST_PATH = "taskStatus/adminTaskStatusList";
     private static final String TASK_STATUS_LIST_PAGE_PATH = "taskStatus/taskStatusList";
-    private static final String NEW_TASK_STATUS_PAGE_PATH = "taskStatus/newTaskStatus";
-    private static final String TASK_STATUS_PAGE_PATH = "taskStatus/taskStatus";
-    private static final String EDIT_TASK_STATUS_PAGE_PATH = "taskStatus/editTaskStatus";
     private static final String NOT_FOUND_PAGE_PATH = "pageNotFound";
     private static final String FORBIDDEN_PAGE_PATH = "pageForbidden";
 
-    private static final String TASK_STATUS_REDIRECT = "redirect:/taskStatus/%d";
     private static final String TASK_STATUS_LIST_REDIRECT = "redirect:/project/%d/taskStatus";
-    private static final String PROJECT_REDIRECT = "redirect:/project/%d";
 
-    private final TaskService taskService;
     private final ProjectService projectService;
     private final TaskStatusService taskStatusService;
 
-    private final Mapper<Task, TaskDto> taskMapper;
-
-    public TaskStatusController(TaskService taskService, ProjectService projectService,
-        TaskStatusService taskStatusService, Mapper<Task, TaskDto> taskMapper) {
-        this.taskService = taskService;
+    public TaskStatusController(ProjectService projectService, TaskStatusService taskStatusService) {
         this.projectService = projectService;
         this.taskStatusService = taskStatusService;
-        this.taskMapper = taskMapper;
     }
 
     @GetMapping

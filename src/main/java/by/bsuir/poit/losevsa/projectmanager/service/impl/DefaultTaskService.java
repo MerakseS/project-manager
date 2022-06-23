@@ -39,7 +39,8 @@ public class DefaultTaskService implements TaskService {
 
     @Override
     public List<Task> getAll() {
-        return null;
+        LOG.info("Getting all tasks");
+        return taskRepository.findAll();
     }
 
     @Override

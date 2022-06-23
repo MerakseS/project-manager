@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragment/header::header('Список задач')">
+    <title>Список проектов</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+<div th:replace="fragment/navbar::navbar"></div>
+
+<main class="flex-shrink-0">
+    <div class="container">
+        <main class="px-3">
+            <h1>Список задач</h1>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Описание</th>
+                    <th scope="col">Дата начала</th>
+                    <th scope="col">Дата окончания</th>
+                    <th scope="col">Исполнитель</th>
+                    <th scope="col">Статусы задачи</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${taskList}" th:object="${task}">
+                    <th scope="row" th:text="*{id}"></th>
+                    <td th:text="*{name}"></td>
+                    <td style="white-space: nowrap; text-overflow:ellipsis; overflow: hidden; max-width: 300px;"
+                        th:text="*{description}"></td>
+                    <td th:text="*{startDate}"></td>
+                    <td th:text="*{endDate}"></td>
+                    <td th:text="|@*{employee.login}|"></td>
+                    <td>
+            <span th:each="taskStatus : *{taskStatuses}" th:object="${taskStatus}"
+                  th:class="|badge rounded-pill bg-*{color} me-1 mb-1|" th:text="*{name}"></span>
+                    </td>
+                    <td class="text-end">
+                        <form th:action="@{/task/{id}(id=*{id})}" th:method="DELETE">
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
+                                <a class="btn btn-outline-secondary" th:href="@{/task/{id}(id=*{id})}">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a class="btn btn-outline-secondary" th:href="@{/task/{id}/edit(id=*{id})}">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="newProject.html" th:href="@{/project/new}">Добавить проект</a>
+        </main>
+    </div>
+</main>
+
+<div th:replace="fragment/footer::footer"></div>
+
+</body>
+</html>

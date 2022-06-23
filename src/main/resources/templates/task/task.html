@@ -34,6 +34,14 @@
                     </p>
                 </div>
 
+                <div th:unless="*{#lists.isEmpty(taskStatuses)}">
+                    <h4>Статусы задачи</h4>
+                    <div class="d-flex flex-row">
+                        <h4><span th:each="taskStatus : *{taskStatuses}" th:object="${taskStatus}"
+                              th:class="|badge rounded-pill bg-*{color} me-1 mb-1|" th:text="*{name}"></span></h4>
+                    </div>
+                </div>
+
                 <div class="mt-3">
                     <form class="form" th:action="@{/task/{id}(id=*{id})}" th:method="DELETE">
                         <a class="btn btn-primary" th:href="@{/task/{id}/edit(id=*{id})}">

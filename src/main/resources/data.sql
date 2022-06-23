@@ -50,3 +50,8 @@ INSERT INTO task_status (color, name, project_id)
 VALUES ('danger', 'TO DO', 1),
        ('warning', 'DOING', 1),
        ('success', 'DONE', 1);
+
+INSERT INTO task_task_status (task_id, task_status_id)
+VALUES (3, 1),
+       (3, 2),
+       (3, 3);

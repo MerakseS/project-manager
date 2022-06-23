@@ -49,6 +49,7 @@ public class TaskController {
     private static final String TASK_LIST_ATTRIBUTE_NAME = "taskList";
     private static final String PROJECT_ATTRIBUTE_NAME = "project";
     private static final String PARTICIPANTS_ATTRIBUTE_NAME = "participants";
+    private static final String TASK_STATUSES_ATTRIBUTE_NAME = "taskStatuses";
     private static final String ERROR_ATTRIBUTE_NAME = "errorMessage";
 
     private static final String ADMIN_TASK_LIST_PATH = "task/adminTaskList";
@@ -87,9 +88,7 @@ public class TaskController {
         @ModelAttribute("taskDto") TaskDto taskDto, Authentication authentication, Model model) {
         try {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-            model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+            setTaskFormAttributes(projectId, userDetails.getUsername(), model);
 
             TaskList taskList = taskListService.get(taskListId);
             taskDto.setTaskListId(taskList.getId());
@@ -114,9 +113,7 @@ public class TaskController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't save task cause: %s", bindingResult));
-                Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-                model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-                model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+                setTaskFormAttributes(projectId, userDetails.getUsername(), model);
                 return NEW_TASK_PAGE_PATH;
             }
 
@@ -168,11 +165,7 @@ public class TaskController {
         try {
             Task task = taskService.get(id);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Project project = projectService.getByEmployeeLogin(task.getTaskList().getProject().getId(),
-                userDetails.getUsername());
-
-            model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-            model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+            setTaskFormAttributes(task.getTaskList().getProject().getId(), userDetails.getUsername(), model);
 
             TaskDto taskDto = taskMapper.toDto(task);
             model.addAttribute(TASK_DTO_ATTRIBUTE_NAME, taskDto);
@@ -198,9 +191,7 @@ public class TaskController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             if (bindingResult.hasErrors()) {
                 LOG.warn(format("Can't update task cause: %s", bindingResult));
-                Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-                model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-                model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+                setTaskFormAttributes(projectId, userDetails.getUsername(), model);
                 return EDIT_TASK_PAGE_PATH;
             }
 
@@ -246,6 +237,13 @@ public class TaskController {
         }
     }
 
+    private void setTaskFormAttributes(long projectId, String username, Model model) {
+        Project project = projectService.getByEmployeeLogin(projectId, username);
+        model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
+        model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+        model.addAttribute(TASK_STATUSES_ATTRIBUTE_NAME, project.getTaskStatuses());
+    }
+
     private String handleException(String logMessage, long id, Exception exception,
         String clientMessage, String pagePath, Model model) {
 
@@ -261,9 +259,7 @@ public class TaskController {
         bindingResult.addError(error);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Project project = projectService.getByEmployeeLogin(projectId, userDetails.getUsername());
-        model.addAttribute(PROJECT_ATTRIBUTE_NAME, project);
-        model.addAttribute(PARTICIPANTS_ATTRIBUTE_NAME, project.getParticipants());
+        setTaskFormAttributes(projectId, userDetails.getUsername(), model);
 
         return newTaskPagePath;
     }

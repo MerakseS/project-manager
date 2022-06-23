@@ -31,7 +31,9 @@ public class DefaultTaskStatusService implements TaskStatusService {
 
     @Override
     public TaskStatus get(long id) {
-        return null;
+        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow();
+        LOG.info(format("Successfully got task status with id %d", id));
+        return taskStatus;
     }
 
     @Override

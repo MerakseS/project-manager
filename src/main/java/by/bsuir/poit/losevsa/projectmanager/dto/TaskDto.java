@@ -2,6 +2,7 @@ package by.bsuir.poit.losevsa.projectmanager.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
@@ -32,10 +33,12 @@ public class TaskDto implements Serializable {
 
     private Long employeeId;
 
+    private List<Long> taskStatusesId;
+
     public TaskDto() {
     }
 
-    public TaskDto(Long id, String name, String description, Long taskListId, LocalDate startDate, LocalDate endDate, Long employeeId) {
+    public TaskDto(Long id, String name, String description, Long taskListId, LocalDate startDate, LocalDate endDate, Long employeeId, List<Long> taskStatusesId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -43,6 +46,7 @@ public class TaskDto implements Serializable {
         this.startDate = startDate;
         this.endDate = endDate;
         this.employeeId = employeeId;
+        this.taskStatusesId = taskStatusesId;
     }
 
     public Long getId() {
@@ -99,6 +103,14 @@ public class TaskDto implements Serializable {
 
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public List<Long> getTaskStatusesId() {
+        return taskStatusesId;
+    }
+
+    public void setTaskStatusesId(List<Long> taskStatusesId) {
+        this.taskStatusesId = taskStatusesId;
     }
 
     @Override

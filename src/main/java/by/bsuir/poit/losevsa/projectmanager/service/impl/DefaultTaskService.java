@@ -66,6 +66,7 @@ public class DefaultTaskService implements TaskService {
         oldTask.setEndDate(newTask.getEndDate());
         oldTask.setTaskList(newTask.getTaskList());
         oldTask.setEmployee(newTask.getEmployee());
+        oldTask.setTaskStatuses(newTask.getTaskStatuses());
 
         taskRepository.save(oldTask);
         LOG.info(format("Successfully updated task with id %d", oldTask.getId()));

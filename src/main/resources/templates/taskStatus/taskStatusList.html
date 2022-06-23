@@ -18,13 +18,13 @@
                     <tr th:each="taskStatus : ${taskStatusList}" th:object="${taskStatus}">
                         <td><h4><span th:class="|badge bg-*{color}|" th:text="*{name}"></span></h4></td>
                         <td>
-                            <form th:action="@{/taskStatus/{id}(id=*{id})}" th:method="delete">
+                            <form th:action="@{/project/{projectId}/taskStatus/{id}(projectId=${project.id},id=*{id})}" th:method="delete">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic outlined example">
-                                    <button class="btn btn-outline-secondary" data-bs-toggle="modal"
+                                    <a class="btn btn-outline-secondary" data-bs-toggle="modal"
                                             data-bs-target="#editTaskStatusModal"
-                                            th:attr="data-id=*{id},data-name=*{name},data-color=*{color}">
+                                            th:attr="data-id=*{id},data-projectId=${project.id},data-name=*{name},data-color=*{color}">
                                         <i class="bi bi-pencil-fill"></i>
-                                    </button>
+                                    </a>
                                     <button type="submit" class="btn btn-outline-secondary">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
@@ -48,7 +48,7 @@
 </main>
 
 <div th:replace="taskStatus/newTaskStatusModal::newTaskStatusModal"></div>
-<!--<div th:replace="taskStatus/editTaskStatusModal::editTaskStatusModal"></div>-->
+<div th:replace="taskStatus/editTaskStatusModal::editTaskStatusModal"></div>
 
 <div th:replace="fragment/footer::footer"></div>
 

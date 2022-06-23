@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import by.bsuir.poit.losevsa.projectmanager.entity.TaskList;
 import by.bsuir.poit.losevsa.projectmanager.entity.TaskStatus;
 import by.bsuir.poit.losevsa.projectmanager.repository.TaskStatusRepository;
 import by.bsuir.poit.losevsa.projectmanager.service.TaskStatusService;
@@ -34,12 +35,20 @@ public class DefaultTaskStatusService implements TaskStatusService {
     }
 
     @Override
-    public void update(long id, TaskStatus taskStatus) {
+    public void update(long id, TaskStatus newTaskStatus) {
+        TaskStatus oldTaskStatus = taskStatusRepository.findById(id).orElseThrow();
 
+        oldTaskStatus.setName(newTaskStatus.getName());
+        oldTaskStatus.setColor(newTaskStatus.getColor());
+
+        taskStatusRepository.save(oldTaskStatus);
+        LOG.info(format("Successfully updated task status with id %d", id));
     }
 
     @Override
     public void delete(long id) {
-
+        TaskStatus taskStatus = taskStatusRepository.getReferenceById(id);
+        taskStatusRepository.delete(taskStatus);
+        LOG.info(format("Successfully deleted task status with id %d", id));
     }
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Project manager</title>
+</head>
+
+<body>
+
+<div class="modal fade" id="editTaskStatusModal" tabindex="-1" aria-labelledby="editTaskStatusModalLabel" aria-hidden="true"
+     th:fragment="editTaskStatusModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:object="${taskStatus}" th:method="PUT" th:action="@{/project/{id}/taskStatus(id=${project.id})}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskStatusModalLabel">Изменить статус задачи</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="name" class="form-label">Название</label>
+                    <input id="name" type="text" th:field="*{name}" class="form-control">
+
+                    <label for="color" class="form-label">Цвет</label>
+                    <select id="color" class="form-select" th:field="*{color}">
+                        <option value=""></option>
+                        <option class="badge bg-success" value="success">Зелёный</option>
+                        <option class="badge bg-warning" value="warning">Жёлтый</option>
+                        <option class="badge bg-danger" value="danger">Красный</option>
+                        <option class="badge bg-primary" value="primary">Синий</option>
+                        <option class="badge bg-info" value="info">Голубой</option>
+                        <option class="badge bg-dark" value="dark">Чёрный</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const editTaskStatusModal = document.getElementById('editTaskStatusModal');
+        editTaskStatusModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            const id = button.getAttribute('data-id');
+            const projectId = button.getAttribute('data-projectId');
+            const form = editTaskStatusModal.querySelector('.modal-content form');
+            form.action = '/project/' + projectId + '/taskStatus/' + id;
+
+            const name = button.getAttribute('data-name');
+            const nameInput = editTaskStatusModal.querySelector('.form-control');
+            nameInput.value = name;
+
+            const color = button.getAttribute('data-color');
+            const colorInput = editTaskStatusModal.querySelector('.form-select');
+            colorInput.value = color;
+        });
+    </script>
+</div>
+
+
+</body>
+</html>

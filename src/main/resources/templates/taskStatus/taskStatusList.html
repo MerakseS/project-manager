@@ -12,7 +12,12 @@
     <div class="container">
         <main class="px-3">
             <div class="row justify-content-center">
-                <h2 class="text-center">Статусы задач</h2>
+                <h2 class="text-center">
+                    <a class="text-black text-decoration-none" th:href="@{/project/{id}/details(id=${project.id})}">
+                        <i class="bi bi-arrow-bar-left"></i>
+                    </a>
+                    <span>Статусы задач</span>
+                </h2>
                 <table class="table table-borderless w-auto">
                     <tbody>
                     <tr th:each="taskStatus : ${taskStatusList}" th:object="${taskStatus}">
